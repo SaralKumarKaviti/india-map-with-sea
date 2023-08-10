@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>India Map</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="{{url_for('static',filename='css/india.css')}}">
+	<!-- <link rel="stylesheet" href="css/table.css"> -->
+  	<style type="text/css">
+		@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
+		.clouds-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100px;
+			background-size: 250px 100px;
+			background-repeat: repeat-x;
+			z-index: 1;
+			margin-bottom: 30px;
+		}
+
+		.clouds {
+			background-size: 250px 100px; /* Adjust the size of clouds here */
+			background-repeat: repeat-x;
+			background-position: center;
+			padding-top: 30px; /* Adjust this value to create space for the clouds */
+			padding-bottom: 100px; /* Adjust this value to create space for the clouds */
+		}
+
+		@keyframes moveCloud1 {
+			from { left: -100px; }
+			to { left: 100%; }
+		}
+
+		@keyframes moveCloud2 {
+			from { left: 200px; }
+			to { left: 100%; }
+		}
+
+		@keyframes moveCloud3 {
+			from { left: 300px; }
+			to { left: 100%; }
+		}
+
+		@keyframes moveCloud4 {
+			from { left: -150px; }
+			to { left: 100%; }
+		}
+
+		@keyframes moveCloud5 {
+			from { left: 400px; }
+			to { left: 100%; }
+		}
+
+		@keyframes moveCloud6 {
+			from { left: -50px; }
+			to { left: 100%; }
+		}
+
+		@keyframes moveCloud7 {
+			from { left: 250px; }
+			to { left: 100%; }
+		}
+
+		.cloud {
+			position: absolute;
+			width: 100px;
+			height: 50px;
+			background-image: url("{{url_for('static',filename='images/clouds.png')}}"); /* Replace 'clouds.png' with your cloud image path */
+			background-size: 100% 100%;
+			padding-top: 30px;
+		}
+
+		.cloud1 { animation: moveCloud1 30s linear infinite; top: 10px; }
+		.cloud2 { animation: moveCloud2 50s linear infinite; top: 30px; }
+		.cloud3 { animation: moveCloud3 40s linear infinite; top: 80px; }
+		.cloud4 { animation: moveCloud4 60s linear infinite; top: 10px; }
+		.cloud5 { animation: moveCloud5 75s linear infinite; top: 40px; }
+		.cloud6 { animation: moveCloud6 55s linear infinite; top: 70px; }
+		.cloud7 { animation: moveCloud7 45s linear infinite; top: 20px; }
+
+		.boat {
+			position: absolute;
+			width: 80px;
+			height: 80px;
+			background-image: url("{{url_for('static',filename='images/boat.gif')}}"); /* Replace 'boat.png' with your boat image path */
+			background-size: cover;
+			animation: moveBoat 10s linear infinite; /* Adjust the duration and timing function as needed */
+		}
+		@keyframes moveBoat {
+			0%, 100% { transform: translateX(0); }
+    		50% { transform: translateX(50%); }
+   	
+		}
+
+
+		.boat-bottom {
+			bottom: 30px;
+			left: 50%;
+		}
+
+		.boat-right {
+		    position: absolute;
+		    width: 80px;
+		    height: 80px;
+		    background-image: url("{{url_for('static',filename='images/ship.gif')}}"); /* Replace 'boat.png' with your boat image path */
+		    background-size: cover;
+		    animation: moveBoatRight 10s linear infinite; /* Adjust the duration and timing function as needed */
+		    top: 50%;
+		    right: 60px;
+		    transform: translateY(-50%);
+		}
+		@keyframes moveBoatRight {
+		    0%, 100% { transform: translateX(0); }
+		    50% { transform: translateX(50%); }
+		    51% { transform: translateX(50%) rotateY(180deg); }
+		    52% { transform: translateX(50%) rotateY(180deg); }
+		    100% { transform: translateX(0); }
+		}
+
+		.sea {
+		  position: absolute;
+		  bottom: 0;
+		  left: 0;
+		  width: 100%;
+		  height: 150px;
+		  background-color: #006994;
+		  animation: waveAnimation 2s linear infinite;
+		  z-index: -1; 
+		}
+
+		map-container {
+	  position: relative;
+	  width: 100%;
+	  height: 100vh; /* Adjust the height to fit your map */
+	  /* Add any other styles or background for the map container */
+	}
+
+	@keyframes waveAnimation {
+	  0%, 100% {
+	    transform: translateY(0);
+	  }
+	  50% {
+	    transform: translateY(-10px);
+	  }
+	}
+
+	.boat-left {
+	  position: absolute;
+	  width: 80px;
+	  height: 80px;
+	  background-image: url("{{url_for('static',filename='images/ship.gif')}}"); /* Replace 'boat.png' with your boat image path */
+	  background-size: cover;
+	  animation: moveBoatLeft 10s linear infinite; /* Adjust the duration and timing function as needed */
+	  bottom: 15%;
+	  left: 50px;
+	  transform: translateY(50%);
+	}
+
+	@keyframes moveBoatLeft {
+	  0%, 100% { transform: translateX(0); }
+	  50% { transform: translateX(-50%); }
+	}
+  </style>
+</head>
+<body>
+	<div class="clouds-container"  style="margin-bottom: 10px;">
+		<div class="cloud cloud1"></div>
+		<div class="cloud cloud2"></div>
+		<div class="cloud cloud3"></div>
+		<div class="cloud cloud4"></div>
+		<div class="cloud cloud5"></div>
+		<div class="cloud cloud6"></div>
+		<div class="cloud cloud7"></div>
+	</div>
+
+	<div class="container clouds">
+		<div class="row">
+			<div class="col-lg-8">
+				<div id="india-map" style="transition: margin 1s ease;margin: 0 auto;"><h3 style="padding: 30px; font-size: 30px;color: black;">India Map</h3></div>
+				<div id="chartdiv"></div>
+			</div>
+
+			 <!-- <div class="col-lg-4" id="state-map-container" style="display: none;">
+                <div style="padding: 30px; font-size: 30px; color: black;" id="state-name"></div>
+                <div id="state-map" style="width: 100%; height: 400px;"></div>
+                <button class="btn btn-primary" id="back-to-india-map">Back to India Map</button>
+            </div> -->
+
+            <!-- Add a new container for the district map -->
+            <div class="col-lg-4" id="district-map-container" style="display: none;">
+    <div style="padding: 30px; font-size: 30px; color: black;" id="district-name"></div>
+    <div id="district-map" style="width: 100%; height: 400px;"></div>
+    <div id="district-details"></div> <!-- Add this element to display district details -->
+    <button class="btn btn-primary" id="back-to-state-map">Back to State Map</button>
+</div>
+
+            <div class="col-lg-4" id="state-map-container" style="display: none;">
+    <div style="padding: 30px; font-size: 30px; color: black;" id="state-name"></div>
+    <div id="state-map" style="width: 100%; height: 400px;"></div>
+    <div id="district-details"></div> <!-- Add this element to display district details -->
+    <button class="btn btn-primary" id="back-to-india-map">Back to India Map</button>
+</div>
+
+    </div>
+		</div>
+	</div>
+	<div class="sea"></div>
+	<div class="boat boat-bottom"></div>
+	<div class="boat boat-left"></div>
+	<div class="map-container"></div>
+
+	<footer>
+		<p>&copy; 2023 Secure Space Pvt Ltd. All rights reserved.</p>
+	</footer>
+	<script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/maps.js"></script>
+    <script src="https://www.amcharts.com/lib/4/geodata/india2019High.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+    <script src="https://www.amcharts.com/lib/4/geodata/indiaHigh.js"></script>
+	<script type="text/javascript">
+        // Sample district data for Maharashtra
+        var maharashtraDistricts = [
+            {
+                id: "IN-MH-1",
+                name: "Mumbai",
+                value: 80,
+            },
+            {
+                id: "IN-MH-2",
+                name: "Pune",
+                value: 60,
+            },
+            {
+                id: "IN-MH-3",
+                name: "Nashik",
+                value: 40,
+            },
+            {
+                id: "IN-MH-4",
+                name: "Nagpur",
+                value: 30,
+            },
+            // Add more districts for Maharashtra as needed...
+        ];
+
+        
+
+        // Function to show the state map
+        function showStateMap(selectedStateData) {
+            document.getElementById("india-map").style.display = "none";
+            document.getElementById("state-map-container").style.display = "block";
+            document.getElementById("district-map-container").style.display = "none";
+            document.getElementById("state-name").innerText = "State: " + selectedStateData.name;
+            document.getElementById("district-details").innerHTML = districtListHtml;
+
+
+            if (selectedStateData.name === "Maharashtra") {
+        // Display Maharashtra districts data
+        var districtData = maharashtraDistricts;
+        var districtListHtml = "<ul>";
+        for (var i = 0; i < districtData.length; i++) {
+            districtListHtml += "<li>" + districtData[i].name + " - " + districtData[i].value + "</li>";
+        }
+        districtListHtml += "</ul>";
+        document.getElementById("district-details").innerHTML = districtListHtml;
+    } else {
+        document.getElementById("district-details").innerHTML = "";
+    }
+
+            // Create and display the state map here using AmCharts library
+            var stateChart = am4core.create("state-map", am4maps.MapChart);
+            stateChart.geodata = am4geodata_india2019High;
+
+            var statePolygonSeries = stateChart.series.push(new am4maps.MapPolygonSeries());
+            statePolygonSeries.useGeodata = true;
+            statePolygonSeries.include = [selectedStateData.id];
+
+            // Add any other specific styling or properties for the state polygons
+
+            // Attach the click event to the polygonTemplate to show district map
+            statePolygonSeries.mapPolygons.template.events.on("hit", function (event) {
+                var selectedDistrictData = event.target.dataItem.dataContext;
+                showDistrictMap(selectedDistrictData);
+            });
+        }
+
+        // Function to show the district map
+        function showDistrictMap(selectedDistrictData) {
+            document.getElementById("state-map-container").style.display = "none";
+            document.getElementById("district-map-container").style.display = "block";
+            document.getElementById("district-name").innerText = "District: " + selectedDistrictData.name;
+
+
+            // Create and display the district map here using AmCharts library
+            var districtChart = am4core.create("district-map", am4maps.MapChart);
+            districtChart.geodata = am4geodata_indiaHigh;
+
+            var districtPolygonSeries = districtChart.series.push(new am4maps.MapPolygonSeries());
+            districtPolygonSeries.useGeodata = true;
+            districtPolygonSeries.include = [selectedDistrictData.id];
+
+            // Add any other specific styling or properties for the district polygons
+        }
+
+    // AmCharts theme setup
+    am4core.useTheme(am4themes_animated);
+
+    // Create and display the India map using AmCharts library
+    var chart = am4core.create("chartdiv", am4maps.MapChart);
+    chart.geodata = am4geodata_india2019High;
+
+    var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+    polygonSeries.useGeodata = true;
+    polygonSeries.data = [
+      // ... (your data here)
+    ];
+
+    var polygonTemplate = polygonSeries.mapPolygons.template;
+    polygonTemplate.tooltipText = "{name}: {value}";
+    polygonTemplate.nonScalingStroke = true;
+    polygonTemplate.strokeWidth = 1.5;
+
+    var hs = polygonTemplate.states.create("hover");
+    hs.properties.fill = am4core.color("#d9b289");
+
+    // Attach the click event to the polygonTemplate to show state map
+    polygonTemplate.events.on("hit", function (event) {
+      var selectedStateData = event.target.dataItem.dataContext;
+      showStateMap(selectedStateData);
+    });
+
+    document.getElementById("back-to-india-map").addEventListener("click", function () {
+      document.getElementById("india-map").style.display = "block";
+      document.getElementById("state-map-container").style.display = "none";
+      document.getElementById("district-map-container").style.display = "none";
+    });
+
+    // Add event listener for the "Back to State Map" button on district map
+    document.getElementById("back-to-state-map").addEventListener("click", function () {
+      document.getElementById("state-map-container").style.display = "block";
+      document.getElementById("district-map-container").style.display = "none";
+    });
+</script>
+
+</body>
+</html>
