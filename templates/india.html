@@ -192,14 +192,15 @@
             <div class="col-lg-4" id="district-map-container" style="display: none;">
     <div style="padding: 30px; font-size: 30px; color: black;" id="district-name"></div>
     <div id="district-map" style="width: 100%; height: 400px;"></div>
-    <div id="district-details"></div> <!-- Add this element to display district details -->
+    <!-- <div id="district-details"></div> Add this element to display district details -->
+    <div id="district-details"></div>
     <button class="btn btn-primary" id="back-to-state-map">Back to State Map</button>
 </div>
 
             <div class="col-lg-4" id="state-map-container" style="display: none;">
     <div style="padding: 30px; font-size: 30px; color: black;" id="state-name"></div>
     <div id="state-map" style="width: 100%; height: 400px;"></div>
-    <div id="district-details"></div> <!-- Add this element to display district details -->
+    <!-- <div id="district-details"></div> Add this element to display district details -->
     <button class="btn btn-primary" id="back-to-india-map">Back to India Map</button>
 </div>
 
@@ -219,32 +220,10 @@
     <script src="https://www.amcharts.com/lib/4/geodata/india2019High.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
     <script src="https://www.amcharts.com/lib/4/geodata/indiaHigh.js"></script>
-	<script type="text/javascript">
-        // Sample district data for Maharashtra
-        var maharashtraDistricts = [
-            {
-                id: "IN-MH-1",
-                name: "Mumbai",
-                value: 80,
-            },
-            {
-                id: "IN-MH-2",
-                name: "Pune",
-                value: 60,
-            },
-            {
-                id: "IN-MH-3",
-                name: "Nashik",
-                value: 40,
-            },
-            {
-                id: "IN-MH-4",
-                name: "Nagpur",
-                value: 30,
-            },
-            // Add more districts for Maharashtra as needed...
-        ];
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+	<script type="text/javascript">
+        
         
 
         // Function to show the state map
@@ -253,21 +232,10 @@
             document.getElementById("state-map-container").style.display = "block";
             document.getElementById("district-map-container").style.display = "none";
             document.getElementById("state-name").innerText = "State: " + selectedStateData.name;
-            document.getElementById("district-details").innerHTML = districtListHtml;
+            // document.getElementById("district-details").innerHTML = districtListHtml;
 
+            fetchDistrictDataForState(selectedStateData.name);
 
-            if (selectedStateData.name === "Maharashtra") {
-        // Display Maharashtra districts data
-        var districtData = maharashtraDistricts;
-        var districtListHtml = "<ul>";
-        for (var i = 0; i < districtData.length; i++) {
-            districtListHtml += "<li>" + districtData[i].name + " - " + districtData[i].value + "</li>";
-        }
-        districtListHtml += "</ul>";
-        document.getElementById("district-details").innerHTML = districtListHtml;
-    } else {
-        document.getElementById("district-details").innerHTML = "";
-    }
 
             // Create and display the state map here using AmCharts library
             var stateChart = am4core.create("state-map", am4maps.MapChart);
@@ -285,6 +253,24 @@
                 showDistrictMap(selectedDistrictData);
             });
         }
+
+		function fetchDistrictDataForState(state) {
+		    // Fetch state and district data using AJAX or fetch API
+		    fetch(`/getStateDetails/${state}`)
+		        .then(response => response.json())
+		        .then(data => {
+		            var districtListHtml = "<ul>";
+		            var districtData = data.state_districts;
+		            for (var i = 0; i < districtData.length; i++) {
+		                districtListHtml += "<li>" + districtData[i].name + " - " + districtData[i].value + "</li>";
+		            }
+		            districtListHtml += "</ul>";
+		            document.getElementById("district-details").innerHTML = districtListHtml;
+		        })
+		        .catch(error => {
+		            console.error("Error fetching state and district data:", error);
+		        });
+		}
 
         // Function to show the district map
         function showDistrictMap(selectedDistrictData) {
@@ -304,44 +290,45 @@
             // Add any other specific styling or properties for the district polygons
         }
 
-    // AmCharts theme setup
-    am4core.useTheme(am4themes_animated);
+	        
+	    // AmCharts theme setup
+	    am4core.useTheme(am4themes_animated);
 
-    // Create and display the India map using AmCharts library
-    var chart = am4core.create("chartdiv", am4maps.MapChart);
-    chart.geodata = am4geodata_india2019High;
+	    // Create and display the India map using AmCharts library
+	    var chart = am4core.create("chartdiv", am4maps.MapChart);
+	    chart.geodata = am4geodata_india2019High;
 
-    var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
-    polygonSeries.useGeodata = true;
-    polygonSeries.data = [
-      // ... (your data here)
-    ];
+	    var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+	    polygonSeries.useGeodata = true;
+	    polygonSeries.data = [
+	      // ... (your data here)
+	    ];
 
-    var polygonTemplate = polygonSeries.mapPolygons.template;
-    polygonTemplate.tooltipText = "{name}: {value}";
-    polygonTemplate.nonScalingStroke = true;
-    polygonTemplate.strokeWidth = 1.5;
+	    var polygonTemplate = polygonSeries.mapPolygons.template;
+	    polygonTemplate.tooltipText = "{name}: {value}";
+	    polygonTemplate.nonScalingStroke = true;
+	    polygonTemplate.strokeWidth = 1.5;
 
-    var hs = polygonTemplate.states.create("hover");
-    hs.properties.fill = am4core.color("#d9b289");
+	    var hs = polygonTemplate.states.create("hover");
+	    hs.properties.fill = am4core.color("#d9b289");
 
-    // Attach the click event to the polygonTemplate to show state map
-    polygonTemplate.events.on("hit", function (event) {
-      var selectedStateData = event.target.dataItem.dataContext;
-      showStateMap(selectedStateData);
-    });
+	    // Attach the click event to the polygonTemplate to show state map
+	    polygonTemplate.events.on("hit", function (event) {
+	      var selectedStateData = event.target.dataItem.dataContext;
+	      showStateMap(selectedStateData);
+	    });
 
-    document.getElementById("back-to-india-map").addEventListener("click", function () {
-      document.getElementById("india-map").style.display = "block";
-      document.getElementById("state-map-container").style.display = "none";
-      document.getElementById("district-map-container").style.display = "none";
-    });
+	    document.getElementById("back-to-india-map").addEventListener("click", function () {
+	      document.getElementById("india-map").style.display = "block";
+	      document.getElementById("state-map-container").style.display = "none";
+	      document.getElementById("district-map-container").style.display = "none";
+	    });
 
-    // Add event listener for the "Back to State Map" button on district map
-    document.getElementById("back-to-state-map").addEventListener("click", function () {
-      document.getElementById("state-map-container").style.display = "block";
-      document.getElementById("district-map-container").style.display = "none";
-    });
+	    // Add event listener for the "Back to State Map" button on district map
+	    document.getElementById("back-to-state-map").addEventListener("click", function () {
+	      document.getElementById("state-map-container").style.display = "block";
+	      document.getElementById("district-map-container").style.display = "none";
+	    });
 </script>
 
 </body>
