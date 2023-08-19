@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/crud_page.css') }}">
+
+</head>
+<body>
+      
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+      <a class="navbar-brand" href="">Username : {{ username }}</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                  {% if 'username' in session %}
+                      <form action="{{ url_for('logout') }}" method="POST">
+                          <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</button>
+                      </form>
+                  {% else %}
+                      <a class="btn btn-outline-primary my-2 my-sm-0" href="{{ url_for('login_user') }}">Login</a>
+                  {% endif %}
+              </li>
+          </ul>
+      </div>
+  </div>
+</nav>
+<div class="skills">
+    <div class="row">
+        <div class="box add">
+            <div class="content">
+                <h2>Add</h2>
+                {% if option.optionStatus == 2 %}
+                <i class="fa fa-ban" aria-hidden="true"></i>
+                {% else %}
+                
+                <a href="{{ url_for('addStudentProfile') }}"><i class="fas fa-plus-circle"></i></a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="box edit">
+            <div class="content">
+                <h2>Edit</h2>
+                {% if option.optionStatus == 2 %}
+                <a href="#"><i class="fas fa-edit"></i></a>
+                {% else %}
+                <i class="fa fa-ban" aria-hidden="true"></i>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="center">
+        <div class="box">
+            <h2 style="color: red; font-size: 24px; font-weight: bold; text-transform: uppercase;">CRUD</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box delete">
+            <div class="content">
+                <h2>Delete</h2>
+                {% if option.optionStatus == 2 %}
+                <a href="#"><i class="fas fa-trash"></i></a>
+                {% else %}
+                <i class="fa fa-ban" aria-hidden="true"></i>
+                {% endif %}
+            </div>
+        </div>
+        <div class="box view">
+            <div class="content">
+                <h2>View</h2>
+                <a href="#"><i class="fas fa-eye"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+    
+</body>
+</html>

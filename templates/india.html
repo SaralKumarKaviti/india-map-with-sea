@@ -255,22 +255,72 @@
         }
 
 		function fetchDistrictDataForState(state) {
-		    // Fetch state and district data using AJAX or fetch API
-		    fetch(`/getStateDetails/${state}`)
-		        .then(response => response.json())
-		        .then(data => {
-		            var districtListHtml = "<ul>";
-		            var districtData = data.state_districts;
-		            for (var i = 0; i < districtData.length; i++) {
-		                districtListHtml += "<li>" + districtData[i].name + " - " + districtData[i].value + "</li>";
-		            }
-		            districtListHtml += "</ul>";
-		            document.getElementById("district-details").innerHTML = districtListHtml;
-		        })
-		        .catch(error => {
-		            console.error("Error fetching state and district data:", error);
-		        });
-		}
+    // Fetch state and district data using AJAX or fetch API
+    fetch(`/getStateDetails/${state}`)
+        .then(response => response.json())
+        .then(data => {
+            var stateTemplate = `
+               
+                        <h1>Students Profile</h1>
+                        <br>
+                        <br>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                	<th>Profile</th>
+                                    <th>Student Name</th>
+                                    
+                                    <th>Location</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                    ${
+                        data.state_districts.map(student => `
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-info__img">
+                                            <img src="/images/profiles/${student.profilePic}" alt="User Img">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="user-info__basic">
+                                        <h5 class="mb-0">
+                                            <a href="${student.profileUrl}">${student.name}</a>
+                                        </h5>
+                                        <p class="text-muted mb-0">@${student.username}</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-muted mb-0">${student.district}</p>
+                                </td>
+                                <!-- ... Rest of the student data ... -->
+                            </tr>
+                        `).join('')
+                    }
+                </tbody>
+                        </table>
+            `;
+            document.getElementById("district-details").innerHTML = stateTemplate;
+        })
+        .catch(error => {
+            console.error("Error fetching state and district data:", error);
+        });
+}
+
+document.getElementById("district-details").addEventListener("click", function(event) {
+    if (event.target.tagName === "A") {
+        event.preventDefault();
+        var profileUrl = event.target.getAttribute("data-profile-url");
+        if (profileUrl) {
+            window.location.href = profileUrl;
+        }
+    }
+});
+
 
         // Function to show the district map
         function showDistrictMap(selectedDistrictData) {

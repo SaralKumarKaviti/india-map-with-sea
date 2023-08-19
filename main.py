@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response,flash
+from flask import Flask, render_template, request, redirect, url_for, make_response,flash,session
 from config import client
 from models import *
 import secrets
@@ -8,15 +8,79 @@ from bson import ObjectId
 from random import randint
 import os
 from flask import jsonify
+from mongoengine import Document, StringField, BooleanField, DateTimeField
+
+
+# from datetime import datetime
+from keys import sg_api_key, from_email, subject
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from functools import wraps
+from flask_login import LoginManager, UserMixin, login_user, login_required, current_user
 
 app = Flask(__name__)
 
+login_manager = LoginManager()
+login_manager.login_view = 'login_user'
+login_manager.init_app(app)
+
 app.secret_key='my_key'
+
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
 
 UPLOAD_FOLDER = 'static/images/profiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','mp4'}
 
+def send_verification_email(verification_token, email):
+    try:
+        # Retrieve user details based on verification token
+        get_user_details = StudentRegistration.objects.get(verification_token=verification_token)
+        
+        if get_user_details:
+            # Set up SMTP server
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login('saralkumar238@gmail.com','xxbcoqhhanliheyo')
+
+            subject = 'Account Verification'
+            
+            # HTML content with clickable verification link
+            html_content = f'''
+                <html>
+                    <body>
+                        <p>Hi {get_user_details.username},</p>
+                        <p>Click this link to verify your email: <a href="{url_for("login_user", verification_token=get_user_details.verification_token, _external=True)}">Verify Email</a></p>
+                    </body>
+                </html>
+            '''
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = 'saralkumar238@gmail.com'
+            msg['To'] = get_user_details.email
+            
+            msg.attach(MIMEText(html_content, 'html'))
+            server.sendmail('saralkumar238@gmail.com', [get_user_details.email], msg.as_string())
+            server.quit()
+        else:
+            return "Something went wrong"
+    except Exception as e:
+        print(e)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login_user'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 @app.route('/images/profiles/<filename>')
@@ -24,12 +88,123 @@ def send_uploaded_profile_pic(filename=''):
     from flask import send_from_directory
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-from flask import render_template
-
 
 @app.route("/")
 def index():
     return render_template('india.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register_user():
+    if request.method == 'POST':
+        # Collect user data from the registration form
+        username = request.form['username']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        # Check if passwords match
+        if password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('register_user'))
+
+        # Save user data to the database
+        verification_token = secrets.token_urlsafe(32)  # Generate verification token
+        new_student = StudentRegistration(
+            username=username, 
+            email=email, 
+            phone=phone, 
+            password=password, 
+            verification_token=verification_token,
+            verified=False,
+            user_activation=False,
+            created_on = datetime.datetime.now(),
+            status=0,
+            optionStatus = 1
+            )
+        new_student.save()
+
+        # Send verification email
+        send_verification_email(verification_token,email)
+        
+        flash('Registration successful. Please check your email to verify your account.')
+        return redirect(url_for('register_user'))
+
+    return render_template('student/student_register.html')
+
+
+@app.route('/verify/<verification_token>')
+def verify_email(verification_token):
+    student = StudentRegistration.objects(verification_token=verification_token).first()
+    if student:
+        # StudentRegistration.update(verified=True)
+        print('Email verified')
+        return redirect(url_for('login_user'))
+    return 'Invalid verification token.'
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_user():
+    if request.method == 'POST':
+        # Collect user data from the login form
+        username = request.form['username']
+        password = request.form['password']
+
+        # Check if user with given username and password exists
+        user = StudentRegistration.objects(username=username, password=password).first()
+
+        if user:
+            if user.verified:
+                session['username'] = username
+                # Redirect to t(or any other appropriate page)
+                return redirect(url_for('activate_account'))
+            else:
+                # Show a message for non-verified users and render the login template
+                flash('Your account is not verified. Please check your email for the verification link.')
+                return render_template('student/login.html', verified=False, show_resend=True)
+
+        # Invalid login credentials, show message and render the login template
+        flash('Invalid login credentials.')
+        return render_template('student/login.html', verified=False, show_resend=False)
+
+    return render_template('student/login.html', verified=True, show_resend=False)
+
+
+
+@app.route('/activate', methods=['GET', 'POST'])
+def activate_account():
+    if request.method == 'POST':
+        username = session.get('username')  
+        print('in session')# Retrieve username from session
+        
+        user = StudentRegistration.objects(username=username).first()
+        print(username)
+
+        if user and not user.user_activation:  # Check if user exists and is not activated
+            user.update(user_activation=True)  # Set user_activation to True
+            print('user activation')
+            flash('Account activated successfully. You can now log in.')
+            return redirect(url_for('crud_page'))  # Redirect to CRUD page
+
+    # If activation is successful or for GET requests, redirect to CRUD page if user is activated
+    username = session.get('username')  # Retrieve username from session
+    user = StudentRegistration.objects(username=username).first()
+    
+    if user and user.user_activation:  # Check if user is activated
+        return redirect(url_for('crud_page'))
+    
+    # Render the activation page for both GET and POST requests
+    return render_template('student/activation.html')
+
+@app.route('/crudpage')
+@login_required 
+def crud_page():
+    username = session.get('username')
+    get_student_data = StudentRegistration.objects(username=username).first()
+    if get_student_data:
+        optionStatus = get_student_data.optionStatus
+        print(optionStatus)
+    return render_template('student/crudpage.html',username=username,option=optionStatus)
 
 
 @app.route("/getStateDetails/<state>")
@@ -37,75 +212,49 @@ def get_state_details(state):
     try:
         # Fetch student details for the specified state
         state_students = StudentProfile.objects(addressList__state=state)
-        student_list = [{"name": "ss", "state": student.addressList["state"]} for student in state_students]
+        student_list = [{"profilePic": student.profilePic, "ref":student.ref,"state": student.addressList["state"]} for student in state_students]
 
-       
-        if state == "Telangana":
-            telangana_districts = get_telangana_districts()
-            response = {
-                "state_students": student_list,
-                "state_districts": telangana_districts
-            }
-
-        elif state == "Andhra Pradesh":
-            andhra_districts = get_andhra_districts()
-            response = {
-                "state_students": student_list,
-                "state_districts": andhra_districts
-            }
-
-        else:
-            response = {
-                "state_students": student_list,
-                "state_districts": []
-            }
+        state_districts = get_state_districts(state)
         
+        response = {
+            "state_students": student_list,
+            "state_districts": state_districts
+        }
         
         return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)})
 
 
-def get_telangana_districts():
+def get_state_districts(state):
     try:
-        # Fetch district data for Telangana from your MongoDB collection
-        telangana_districts = StudentProfile.objects.filter(addressList__state="Telangana")
+        # Fetch district data for the specified state from your MongoDB collection
+        state_districts = StudentProfile.objects.filter(addressList__state=state)
 
         # Prepare the data to match the format you need
         district_list = []
-        for district_data in telangana_districts:
-            district_info = {
-                "name": district_data.addressList.get("district", ""),
-                "value": "ee"
-            }
-            district_list.append(district_info)
+        if state_districts:
+            for district_data in state_districts:
+                district_info = {
+                    "district": district_data.addressList.get("district", ""),
+                    "name": "Saral",
+                    "profilePic":district_data.profilePic,
+                    "profileUrl": 'http://127.0.0.1:5000'+url_for('student_profile', ref=district_data.ref)
+                }
+                print(district_info['profileUrl'])
+                district_list.append(district_info)
+        else:
+            district_list.append({"district": "No data available", "value": ""})
 
         return district_list
     except Exception as e:
-        print("Error fetching Telangana district data:", str(e))
-        return []
-
-def get_andhra_districts():
-    try:
-        # Fetch district data for Andhra Pradesh from your MongoDB collection
-        andhra_districts = StudentProfile.objects.filter(addressList__state="Andhra Pradesh")
-
-        # Prepare the data to match the format you need
-        district_list = []
-        for district_data in andhra_districts:
-            district_info = {
-                "name": district_data.addressList.get("district", ""),
-                "value": "ee"
-            }
-            district_list.append(district_info)
-
-        return district_list
-    except Exception as e:
-        print("Error fetching Andhra Pradesh district data:", str(e))
+        print(f"Error fetching {state} district data:", str(e))
         return []
 
 @app.route("/addStudentProfile",methods=['POST','GET'])
+@login_required
 def addStudentProfile():
+    username = session.get('username')
     createdOn = datetime.datetime.now()
     experience_list = []
     experience_dict = {}
@@ -116,6 +265,18 @@ def addStudentProfile():
     skill_details ={}
     experience_details={}
     media_details={}
+    optionStatus = 0
+    get_student_data = StudentRegistration.objects(username=username).first()
+    if get_student_data:
+        email = get_student_data.email
+        phone_number = get_student_data.phone
+    if current_user.is_authenticated:
+        # Retrieve the user's information using current_user
+        username = current_user.username
+        
+
+        # email = current_user.email
+        # phone_number = current_user.phone_number
 
     if request.method == 'POST':
         profilePic = request.files['profilePic']
@@ -268,7 +429,8 @@ def addStudentProfile():
             }
 
         hobbies = request.form.get('hobbies')
-        
+        # user_email = current_user.email
+        # user_phone = current_user.phone_number
 
         if profilePic and pincode and request.method == 'POST':
             add_profile=StudentProfile(
@@ -281,9 +443,15 @@ def addStudentProfile():
                 addressList = address_details,
                 hobbies=hobbies,
                 createdOn = createdOn,
-                status = 1
+                status = 1,
+                userName=username,
+                email=email,
+                phoneNumber=phone_number,
+                
                 )
             add_profile.save()
+            if add_profile:
+                update_option = get_student_data.update(optionStatus=2)
             
             flash("Data Submitted successfully !")
             return redirect(url_for('addStudentProfile'))
@@ -291,7 +459,7 @@ def addStudentProfile():
             flash("Something went wrong! Please check your details once!!")
 
     
-    return render_template('student/add_profile.html')
+    return render_template('student/add_profile.html',username=username)
 
 @app.route("/profile/<ref>",methods=['POST','GET'])
 def student_profile(ref):
@@ -307,6 +475,7 @@ def student_profile(ref):
             student_dict={
                 "studentName":"Saral",
                 "phone":"7207366926",
+                "email":"ss",
                 "website":student.website,
                 "careerObjective":student.careerObjective,
                 "hobbies":student.hobbies,
@@ -363,11 +532,7 @@ def student_profile(ref):
                         social_media_url_key = "socialMediaURL" + key[len("socialMedia"):]
                         social_media_url = sm.get(social_media_url_key, "")
                         if social_media_name and social_media_url:
-                            social_media_list.append({"name": social_media_name, "url": social_media_url})
-
-
-           
-                
+                            social_media_list.append({"name": social_media_name, "url": social_media_url})         
 
         return render_template('student/profile.html', 
             student_data=student_dict, 
@@ -378,6 +543,11 @@ def student_profile(ref):
 
     except StudentProfile.DoesNotExist:
         return "Student not found"
+
+@app.route('/logout', methods=['POST','GET'])
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login_user'))
 
 
 if __name__ == '__main__':

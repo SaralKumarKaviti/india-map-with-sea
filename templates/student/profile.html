@@ -1,4 +1,5 @@
 <html><head>
+
   <style type="text/css">
 
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
@@ -318,12 +319,12 @@ a {
   margin-top: 3px;
   bottom: 0;
 }
-.section-wrapper .skill-percentage:nth-child(1)::before {
-  width: 80%;
+/*.section-wrapper .skill-percentage:nth-child(n)::before {
+  width: 40%;
   -webkit-animation: skill_1 0.6s ease;
           animation: skill_1 0.6s ease;
-}
-.section-wrapper .skill-percentage:nth-child(2)::before {
+}*/
+./*section-wrapper .skill-percentage:nth-child(2)::before {
   width: 90%;
   -webkit-animation: skill_2 0.6s ease;
           animation: skill_2 0.6s ease;
@@ -352,7 +353,7 @@ a {
   width: 70%;
   -webkit-animation: skill_6 0.6s ease;
           animation: skill_6 0.6s ease;
-}
+}*/
 
 @-webkit-keyframes skill_1 {
   from {
@@ -467,6 +468,7 @@ a {
     width: 70%;
   }
 }
+
   </style>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -475,7 +477,7 @@ a {
 		<div class="container">
 			<div class="picture-resume-wrapper">
         <div class="picture-resume">
-        <span><img src="py.png" alt="" /></span>
+        <span><img src="{{ url_for('send_uploaded_profile_pic', filename=student_data.profilePic) }}" alt="Profile Picture" /></span>
         <svg version="1.1" viewBox="0 0 350 350">
   
   <defs>
@@ -508,7 +510,7 @@ a {
          <div class="clearfix"></div>
  </div>
       <div class="name-wrapper">
-        <h1>Saral Kumar <br/>Kaviti</h1><!-- YOUR NAME AND LAST NAME  -->
+        <h1>{{student_data.studentName}}<br/><!-- YOUR NAME AND LAST NAME  -->
       </div>
       <div class="clearfix"></div>
       <div class="contact-info clearfix">
@@ -521,91 +523,90 @@ a {
         <ul class="list-content ">
         	<li>+34 123 456 789</li> <!-- YOUR PHONE NUMBER  -->
         	<li>saralkumar.securespace@gmail.com</li> <!-- YOUR EMAIL -->
-        	<li><a href="#">-</a></li> <!-- YOUR WEBSITE  -->
-        	<li>Hyderabad</li> <!-- YOUR STATE AND COUNTRY  -->
+        	<li><a href="#">{{student_data.website}}</a></li> <!-- YOUR WEBSITE  -->
+        	<li>{{ student_data.addressDetails.mandal }}, {{ student_data.addressDetails.district }}</li> <!-- YOUR STATE AND COUNTRY  -->
         </ul>
       </div>
       <div class="contact-presentation"> <!-- YOUR PRESENTATION RESUME  -->
-      	<p><span class="bold">Lorem</span> ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod congue nisi, nec consequat quam. In consectetur faucibus turpis eget laoreet. Sed nec imperdiet purus. </p>
+      	<p><span class="bold">Career Objective: </span>{% if student_data.careerObjective %}{{ student_data.careerObjective }}{% else %}Not available{% endif %}</p>
       </div>
-      <div class="contact-social clearfix">
-      	<ul class="list-titles">
-      		<li>Twitter</li>
-      		<li>Dribbble</li>
-      		<li>Codepen</li>
-      	</ul>
-        <ul class="list-content"> <!-- REMEMBER TO PUT THE URL ON THE HREF TAG  -->
-      		<li><a href="">@saralkumar</a></li> <!-- YOUR TWITTER USER  -->
-      		<li><a href="">saralkumar</a></li> <!-- YOUR DRIBBBLE USER  -->
-      		<li><a href="">saralkumar</a></li> <!-- YOUR BEHANCE USER  -->
-      	</ul>
-      </div>
+     <div class="contact-social clearfix">
+        <ul class="list-titles">
+            <span class="bold">Social Media: </span>
+        </ul>
+        <ul class="list-content">
+            {% if social_media_list %}
+            {% for sm in social_media_list %}
+            <li>{{ sm.name }} : <a href="{{ sm.url }}">{{ sm.url }}</a></li>
+            {% endfor %}
+            {% else %}
+            <li>No social media data available.</li>
+            {% endif %}
+        </ul>
+    </div>
 		</div>
 	</section>
   
   <section class="experience section-padding">
   	<div class="container">
   		<h3 class="experience-title">Experience</h3>
-      
+      {% if experience_info %}
+      {% for exp in experience_info %}
       <div class="experience-wrapper">
-      	<div class="company-wrapper clearfix">
-      		<div class="experience-title">Company name</div> <!-- NAME OF THE COMPANY YOUWORK WITH  -->
-          <div class="time">Nov 2012 - Present</div> <!-- THE TIME YOU WORK WITH THE COMPANY  -->
-      	</div>
-        
-        <div class="job-wrapper clearfix">
-        	<div class="experience-title">Front End Developer </div> <!-- JOB TITLE  -->
-          <div class="company-description">
-          	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a elit facilisis, adipiscing leo in, dignissim magna.</p>  <!-- JOB DESCRIPTION  -->
+          <div class="company-wrapper clearfix">
+              <div class="experience-title">{{exp.companyName}}</div>
+              <div class="time">{{exp.fromYear}} - {{exp.toYear}}</div>
           </div>
-        </div>
-        
-        <div class="company-wrapper clearfix">
-      		<div class="experience-title">Company name</div> <!-- NAME OF THE COMPANY YOUWORK WITH  -->
-          <div class="time">Nov 2010 - Present</div> <!-- THE TIME YOU WORK WITH THE COMPANY  -->
-      	</div>
-        
-         <div class="job-wrapper clearfix">
-        	<div class="experience-title">Freelance, Web Designer / Web Developer</div> <!-- JOB TITLE  -->
-          <div class="company-description">
-          	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a elit facilisis, adipiscing leo in, dignissim magna.</p>  <!-- JOB DESCRIPTION  -->
+          <div class="job-wrapper clearfix">
+              <div class="experience-title">{{exp.role}}</div>
+              <div class="company-description">
+                  <p>{{exp.project}}</p>
+              </div>
           </div>
-        </div>
-        
-        <div class="company-wrapper clearfix">
-      		<div class="experience-title">Company name</div> <!-- NAME OF THE COMPANY YOUWORK WITH  -->
-          <div class="time">Nov 2009 - Nov 2010</div> <!-- THE TIME YOU WORK WITH THE COMPANY  -->
-      	</div> 
-        
-         <div class="job-wrapper clearfix">
-        	<div class="experience-title">Web Designer </div> <!-- JOB TITLE  -->
-          <div class="company-description">
-          	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a elit facilisis, adipiscing leo in, dignissim magna.</p>   <!-- JOB DESCRIPTION  -->
-          </div>
-        </div>
-        
-      </div><!--Skill experience-->
+      </div>
+      {% endfor %}
+      {% else %}
+      <p>No experience data available.</p>
+      {% endif %}
+
+
       
-      <div class="section-wrapper clearfix">
-      	<h3 class="section-title">Skills</h3>  <!-- YOUR SET OF SKILLS  -->
-        	<ul>
-        		<li class="skill-percentage">HTML / HTML5</li>
-        		<li class="skill-percentage">CSS / CSS3</li>
-        		<li class="skill-percentage">Javascript</li>
-        		<li class="skill-percentage">Jquery</li>
-        		<li class="skill-percentage">Flask Framework</li>
-        		<li class="skill-percentage">Python</li>
-            
-        	</ul>
+     <div class="section-wrapper clearfix">
+        <h3 class="section-title">Skills</h3><!-- YOUR SET OF SKILLS  -->
+           <ul>
+            {% if skillsinfo %}
+            {% for sk in skillsinfo %}
+            {% if sk.skillLevel == 'Beginner' %}
+            <li class="skill-percentage" style="width: 35%;">{{sk.techName}}</li>
+            {% elif sk.skillLevel == 'Intermediate' %}
+            <li class="skill-percentage" style="width: 40%;">{{sk.techName}}</li>
+            {% elif sk.skillLevel == 'Advanced' %}
+            <li class="skill-percentage" style="width: 60%;">{{sk.techName}}</li>
+            {% elif sk.skillLevel == 'Professional' %}
+            <li class="skill-percentage" style="width: 80%;">{{sk.techName}}</li>
+            {% elif sk.skillLevel == 'Master' %}
+            <li class="skill-percentage" style="width: 100%;">{{sk.techName}}</li>
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            <p>No skills data available</p>
+            {% endif %}
+          </ul>
         
       </div>
+
+
+
+
       
       <div class="section-wrapper clearfix">
         <h3 class="section-title">Hobbies</h3>  <!-- DESCRIPTION OF YOUR HOBBIES -->
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a elit facilisis, adipiscing leo in, dignissim magna.</p>
+        <p>{{ student_data.hobbies }}</p>
         
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a elit facilisis, adipiscing leo in, dignissim magna.</p> 
+       
       </div>
+
+
       
   	</div>
   </section>
@@ -647,4 +648,40 @@ for (var i = 0; i < 20; i++) {
 tl.seek(50);
 
 </script>
+<script>
+    const styleElement = document.querySelector('style');
+
+    const skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Professional', 'Master'];
+
+    for (let i = 1; i <= skillLevels.length; i++) {
+      let widthValue = '100%'; // Set default width to 100%
+
+      switch (skillLevels[i - 1]) {
+        case 'Beginner':
+          widthValue = '35%';
+          break;
+        case 'Intermediate':
+          widthValue = '40%';
+          break;
+        case 'Advanced':
+          widthValue = '60%';
+          break;
+        case 'Professional':
+          widthValue = '80%';
+          break;
+        case 'Master':
+          widthValue = '100%';
+          break;
+      }
+
+      const cssRule = `
+        .section-wrapper .skill-percentage:nth-child(${i})::before {
+          width: ${widthValue};
+          -webkit-animation: skill_${i} 0.6s ease;
+          animation: skill_${i} 0.6s ease;
+        }
+      `;
+      styleElement.sheet.insertRule(cssRule, styleElement.sheet.cssRules.length);
+    }
+  </script>
 </html>
