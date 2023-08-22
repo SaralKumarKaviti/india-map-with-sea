@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Document</title>
+    <title>Student Profile : {{ username }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/crud_page.css') }}">
+
+    <!-- Add these links in your <head> section -->
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ -->
+ 
 
 </head>
 <body>
@@ -37,27 +45,38 @@
       </div>
   </div>
 </nav>
+{% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <div class="alert alert-danger mt-3">
+                {% for message in messages %}
+                  {{ message }}
+                  <br>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
 <div class="skills">
     <div class="row">
         <div class="box add">
             <div class="content">
                 <h2>Add</h2>
-                {% if option.optionStatus == 2 %}
-                <i class="fa fa-ban" aria-hidden="true"></i>
+                {% if option == 1%}
+                <a href="{{ url_for('addStudentProfile') }}"><i class="fas fa-plus-circle" style="color: #e5e2e0; font-size: 20px;"></i></i></a>
                 {% else %}
-                
-                <a href="{{ url_for('addStudentProfile') }}"><i class="fas fa-plus-circle"></i></a>
+                <i class="fa fa-ban" aria-hidden="true" style="font-size: 20px;"></i>
                 {% endif %}
             </div>
         </div>
         <div class="box edit">
             <div class="content">
-                <h2>Edit</h2>
-                {% if option.optionStatus == 2 %}
-                <a href="#"><i class="fas fa-edit"></i></a>
+              <h2>Edit</h2>
+              {% if option == 2%}
+                
+                <a href="{{ url_for('editStudentProfile') }}"><i class="fas fa-edit" style="color: #e5e2e0;font-size: 20px;"></i></a>
                 {% else %}
-                <i class="fa fa-ban" aria-hidden="true"></i>
+                <i class="fa fa-ban" aria-hidden="true" style="color: #8db380;font-size: 20px;"></i>
                 {% endif %}
+
             </div>
         </div>
     </div>
@@ -69,22 +88,65 @@
     <div class="row">
         <div class="box delete">
             <div class="content">
-                <h2>Delete</h2>
-                {% if option.optionStatus == 2 %}
-                <a href="#"><i class="fas fa-trash"></i></a>
-                {% else %}
-                <i class="fa fa-ban" aria-hidden="true"></i>
-                {% endif %}
+              <h2>Delete</h2>
+            {% if option == 2 %}
+                <!-- Loop through the student profiles and create a delete link for each -->
+                {% for student in student_profiles %}
+                  <a href="#" onclick="showDeleteConfirmation('{{ student.userName }}', '{{ url_for('deleteStudentProfile', student_id=student.studentId) }}')">
+                      <i class="fas fa-trash"style="color: #8db380;font-size: 20px;"></i>
+                  </a>
+                {% endfor %}
+
+
+            {% else %}
+                <i class="fa fa-ban" aria-hidden="true"style="color: #8db380;font-size: 20px;"></i>
+            {% endif %}
             </div>
         </div>
         <div class="box view">
-            <div class="content">
-                <h2>View</h2>
-                <a href="#"><i class="fas fa-eye"></i></a>
+    <div class="content">
+        <h2>View</h2>
+{% if view_option == 2 %}
+    {% for student in student_profiles %}
+    <a href="{{ url_for('studentProfile', student_id=student.studentId)}}">
+        <i class="fas fa-eye" style="color: #e5e2e0; font-size: 20px;"></i>
+    </a>
+    {% endfor %}
+{% else %}
+    <i class="fa fa-ban" aria-hidden="true" style="color: #7c2509; font-size: 20px;"></i>
+{% endif %}
+
+    </div>
+</div>
+
+</div>
+
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="confirmationMessage"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a href="#" class="btn btn-danger" id="deleteLink">Delete</a>
             </div>
         </div>
     </div>
 </div>
-    
+
+<script>
+    function showDeleteConfirmation(username, deleteUrl) {
+        var confirmationMessage = "Are you sure you want to delete the student profile for <span style='color: red; font-weight: bold;'>" + username + "</span>?";
+        
+        $("#confirmationMessage").html(confirmationMessage);
+        $("#deleteLink").attr("href", deleteUrl);
+        $("#deleteConfirmationModal").modal("show");
+    }
+</script>
 </body>
 </html>

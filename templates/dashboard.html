@@ -14,7 +14,7 @@
 </head>
 <body>
   <div class="wrapper">
-    <header>Login</header>
+    <header>Admin Login</header>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <div class="alert alert-danger mt-3">
@@ -25,10 +25,10 @@
         </div>
       {% endif %}
     {% endwith %}
-    <form method="POST" action="{{ url_for('login_user') }}">
+    <form method="POST" action="{{ url_for('adminIndex') }}">
       <div class="field email">
         <div class="input-area">
-          <input type="text" name="username" placeholder="Username" required>
+          <input type="text" name="uname" placeholder="Username" required>
           <i class="icon fas fa-envelope"></i>
           <i class="error error-icon fas fa-exclamation-circle"></i>
         </div>
@@ -36,7 +36,7 @@
       </div>
       <div class="field password">
         <div class="input-area">
-          <input type="password" name="password" placeholder="Password" required>
+          <input type="password" name="pwd" placeholder="Password" required>
           <i class="icon fas fa-lock"></i>
           <i class="error error-icon fas fa-exclamation-circle"></i>
         </div>
@@ -46,7 +46,7 @@
       <input type="submit" value="Login">
     </form>
    
-    <div class="sign-txt">Not yet member? <a href="{{ url_for('register_user') }}">Register now</a></div>
+    
   </div>
 
    <div class="modal fade" id="invalidLoginModal" tabindex="-1" aria-labelledby="invalidLoginModalLabel" aria-hidden="true">

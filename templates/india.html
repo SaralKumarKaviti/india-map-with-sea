@@ -8,127 +8,7 @@
 	<!-- <link rel="stylesheet" href="css/table.css"> -->
   	<style type="text/css">
 		@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
-		.clouds-container {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100px;
-			background-size: 250px 100px;
-			background-repeat: repeat-x;
-			z-index: 1;
-			margin-bottom: 30px;
-		}
-
-		.clouds {
-			background-size: 250px 100px; /* Adjust the size of clouds here */
-			background-repeat: repeat-x;
-			background-position: center;
-			padding-top: 30px; /* Adjust this value to create space for the clouds */
-			padding-bottom: 100px; /* Adjust this value to create space for the clouds */
-		}
-
-		@keyframes moveCloud1 {
-			from { left: -100px; }
-			to { left: 100%; }
-		}
-
-		@keyframes moveCloud2 {
-			from { left: 200px; }
-			to { left: 100%; }
-		}
-
-		@keyframes moveCloud3 {
-			from { left: 300px; }
-			to { left: 100%; }
-		}
-
-		@keyframes moveCloud4 {
-			from { left: -150px; }
-			to { left: 100%; }
-		}
-
-		@keyframes moveCloud5 {
-			from { left: 400px; }
-			to { left: 100%; }
-		}
-
-		@keyframes moveCloud6 {
-			from { left: -50px; }
-			to { left: 100%; }
-		}
-
-		@keyframes moveCloud7 {
-			from { left: 250px; }
-			to { left: 100%; }
-		}
-
-		.cloud {
-			position: absolute;
-			width: 100px;
-			height: 50px;
-			background-image: url("{{url_for('static',filename='images/clouds.png')}}"); /* Replace 'clouds.png' with your cloud image path */
-			background-size: 100% 100%;
-			padding-top: 30px;
-		}
-
-		.cloud1 { animation: moveCloud1 30s linear infinite; top: 10px; }
-		.cloud2 { animation: moveCloud2 50s linear infinite; top: 30px; }
-		.cloud3 { animation: moveCloud3 40s linear infinite; top: 80px; }
-		.cloud4 { animation: moveCloud4 60s linear infinite; top: 10px; }
-		.cloud5 { animation: moveCloud5 75s linear infinite; top: 40px; }
-		.cloud6 { animation: moveCloud6 55s linear infinite; top: 70px; }
-		.cloud7 { animation: moveCloud7 45s linear infinite; top: 20px; }
-
-		.boat {
-			position: absolute;
-			width: 80px;
-			height: 80px;
-			background-image: url("{{url_for('static',filename='images/boat.gif')}}"); /* Replace 'boat.png' with your boat image path */
-			background-size: cover;
-			animation: moveBoat 10s linear infinite; /* Adjust the duration and timing function as needed */
-		}
-		@keyframes moveBoat {
-			0%, 100% { transform: translateX(0); }
-    		50% { transform: translateX(50%); }
-   	
-		}
-
-
-		.boat-bottom {
-			bottom: 30px;
-			left: 50%;
-		}
-
-		.boat-right {
-		    position: absolute;
-		    width: 80px;
-		    height: 80px;
-		    background-image: url("{{url_for('static',filename='images/ship.gif')}}"); /* Replace 'boat.png' with your boat image path */
-		    background-size: cover;
-		    animation: moveBoatRight 10s linear infinite; /* Adjust the duration and timing function as needed */
-		    top: 50%;
-		    right: 60px;
-		    transform: translateY(-50%);
-		}
-		@keyframes moveBoatRight {
-		    0%, 100% { transform: translateX(0); }
-		    50% { transform: translateX(50%); }
-		    51% { transform: translateX(50%) rotateY(180deg); }
-		    52% { transform: translateX(50%) rotateY(180deg); }
-		    100% { transform: translateX(0); }
-		}
-
-		.sea {
-		  position: absolute;
-		  bottom: 0;
-		  left: 0;
-		  width: 100%;
-		  height: 150px;
-		  background-color: #006994;
-		  animation: waveAnimation 2s linear infinite;
-		  z-index: -1; 
-		}
+		
 
 		map-container {
 	  position: relative;
@@ -137,58 +17,43 @@
 	  /* Add any other styles or background for the map container */
 	}
 
-	@keyframes waveAnimation {
-	  0%, 100% {
-	    transform: translateY(0);
-	  }
-	  50% {
-	    transform: translateY(-10px);
-	  }
-	}
-
-	.boat-left {
-	  position: absolute;
-	  width: 80px;
-	  height: 80px;
-	  background-image: url("{{url_for('static',filename='images/ship.gif')}}"); /* Replace 'boat.png' with your boat image path */
-	  background-size: cover;
-	  animation: moveBoatLeft 10s linear infinite; /* Adjust the duration and timing function as needed */
-	  bottom: 15%;
-	  left: 50px;
-	  transform: translateY(50%);
-	}
-
-	@keyframes moveBoatLeft {
-	  0%, 100% { transform: translateX(0); }
-	  50% { transform: translateX(-50%); }
-	}
+	
   </style>
 </head>
 <body>
-	<div class="clouds-container"  style="margin-bottom: 10px;">
-		<div class="cloud cloud1"></div>
-		<div class="cloud cloud2"></div>
-		<div class="cloud cloud3"></div>
-		<div class="cloud cloud4"></div>
-		<div class="cloud cloud5"></div>
-		<div class="cloud cloud6"></div>
-		<div class="cloud cloud7"></div>
-	</div>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Admin</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <!-- Add your other navigation links here -->
+        </ul>
+        {% if 'admin' in session %}
+        <a href="{{ url_for('alogout') }}" class="btn btn-outline-danger my-2 my-sm-0">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+        {% else %}
+        <a class="btn btn-outline-primary my-2 my-sm-0" href="{{ url_for('login_user') }}">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+        {% endif %}
+    </div>
+</nav>
+
+
+
 
 	<div class="container clouds">
 		<div class="row">
 			<div class="col-lg-8">
 				<div id="india-map" style="transition: margin 1s ease;margin: 0 auto;"><h3 style="padding: 30px; font-size: 30px;color: black;">India Map</h3></div>
+
 				<div id="chartdiv"></div>
+				
+
 			</div>
-
-			 <!-- <div class="col-lg-4" id="state-map-container" style="display: none;">
-                <div style="padding: 30px; font-size: 30px; color: black;" id="state-name"></div>
-                <div id="state-map" style="width: 100%; height: 400px;"></div>
-                <button class="btn btn-primary" id="back-to-india-map">Back to India Map</button>
-            </div> -->
-
-            <!-- Add a new container for the district map -->
             <div class="col-lg-4" id="district-map-container" style="display: none;">
     <div style="padding: 30px; font-size: 30px; color: black;" id="district-name"></div>
     <div id="district-map" style="width: 100%; height: 400px;"></div>
@@ -255,61 +120,70 @@
         }
 
 		function fetchDistrictDataForState(state) {
-    // Fetch state and district data using AJAX or fetch API
-    fetch(`/getStateDetails/${state}`)
-        .then(response => response.json())
-        .then(data => {
-            var stateTemplate = `
-               
-                        <h1>Students Profile</h1>
-                        <br>
-                        <br>
+            fetch(`/getStateDetails/${state}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && Array.isArray(data.state_students)) {
+                        if (data.state_students.length === 0) {
+                            // Display a message when no data is available
+                            var stateTemplate = `
+                                <h1>No Data Available</h1>
+                            `;
+                        } else {
+                            var stateTemplate = `
+                                <h1>Students Profile</h1>
+                                <br>
+                                <br>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Profile</th>
+                                            <th>Student Name</th>
+                                            <th>Location</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${
+                                            // Generate HTML for each student
+                                            data.state_students.map(student => `
+                                                <tr>
+                                                    <td>
+                                                        <div class="user-info">
+                                                            <div class="user-info__img">
+                                                                <a href="/student_profile/">
+                                                                    <img src="/images/profiles/${student.profilePic}" alt="User Img">
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="user-info__basic">
+                                                            <h5 class="mb-0">
+                                                                <a href="/student_profile/">${student.name}</a>
+                                                            </h5>
+                                                            <p class="text-muted mb-0">@${student.username}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p class="text-muted mb-0">${student.state}, ${student.district}</p>
+                                                    </td>
+                                                </tr>
+                                            `).join('') // Join the generated HTML for each student
+                                        }
+                                    </tbody>
+                                </table>
+                            `;
+                        }
 
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                	<th>Profile</th>
-                                    <th>Student Name</th>
-                                    
-                                    <th>Location</th>
-                                    
-                                </tr>
-                            </thead>
-                            <tbody>
-                    ${
-                        data.state_districts.map(student => `
-                            <tr>
-                                <td>
-                                    <div class="user-info">
-                                        <div class="user-info__img">
-                                            <img src="/images/profiles/${student.profilePic}" alt="User Img">
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="user-info__basic">
-                                        <h5 class="mb-0">
-                                            <a href="${student.profileUrl}">${student.name}</a>
-                                        </h5>
-                                        <p class="text-muted mb-0">@${student.username}</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="text-muted mb-0">${student.district}</p>
-                                </td>
-                                <!-- ... Rest of the student data ... -->
-                            </tr>
-                        `).join('')
+                        document.getElementById("district-details").innerHTML = stateTemplate;
+                    } else {
+                        console.error("Invalid or missing state_students data:", data);
                     }
-                </tbody>
-                        </table>
-            `;
-            document.getElementById("district-details").innerHTML = stateTemplate;
-        })
-        .catch(error => {
-            console.error("Error fetching state and district data:", error);
-        });
-}
+                })
+                .catch(error => {
+                    console.error("Error fetching state and district data:", error);
+                });
+        }
 
 document.getElementById("district-details").addEventListener("click", function(event) {
     if (event.target.tagName === "A") {

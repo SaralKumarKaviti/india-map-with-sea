@@ -1,5 +1,10 @@
 from mongoengine import *
 
+class adminDetails(Document):
+	admin = StringField()
+	password = StringField()
+	is_admin = BooleanField()
+
 
 class StudentRegistration(Document):
     username = StringField(required=True)
@@ -12,6 +17,7 @@ class StudentRegistration(Document):
     verification_token = StringField()
     status = IntField(default=0)
     optionStatus = IntField(default=0)
+    viewOptionStatus = IntField(default=0)
 
 
 class StudentProfile(Document):
@@ -29,5 +35,6 @@ class StudentProfile(Document):
 	ref = StringField()
 	createdOn = DateTimeField()
 	status = IntField()
+	studentId = ObjectIdField()
 	
 

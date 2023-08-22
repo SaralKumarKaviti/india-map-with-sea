@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profile</title>
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/add_profile.css') }}">
+</head>
+<body>
+  <form action="{{ url_for('addStudentProfile') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateForm();">
+    <div class="container py-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="username">Username : {{ username }}</div>
+        {% if 'username' in session %}
+        <a href="{{ url_for('logout') }}">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+        {% else %}
+        <a class="btn btn-outline-primary my-2 my-sm-0" href="{{ url_for('login_user') }}">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+        {% endif %}
+      </div>
+      <div class="title h1 text-center">Student Profile</div>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="alert alert-danger mt-3">
+        {% for message in messages %}
+        {{ message }}
+        <br>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 d-flex flex-column">
+            <div class="card flex-grow-1">
+              <div class="card-block">
+                <div class="form-group">
+                  <label for="fileInput">Profile Pic:</label>
+                  <input type="file" id="fileInput" class="form-control-file" name="profilePic">
+                </div>
+                <div class="form-group">
+                  <label for="textInput">Website:</label>
+                  <input type="text" id="textInput" class="form-control" placeholder="Enter text" name="website" value="{{ existing_website }}">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 d-flex flex-column">
+            <div class="card flex-grow-1">
+              <div class="card-block">
+                <div class="form-group">
+                  <label for="textarea">Career Objective:</label>
+                  <textarea id="textarea" class="form-control" rows="4" placeholder="Enter your text here" name="careerObjective">{{ existing_career }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ecard" id="myEcard">
+    <h2 class="ecard-title">Experience:</h2>
+    <div id="experienceContainer">
+        {% for experience in experienceDetails %}
+            <div class="ecard-content">
+                <div class="form-group">
+                    <label for="editedCompanyName{{ loop.index0 }}">Company Name:</label>
+                    <input type="text" id="editedCompanyName{{ loop.index0 }}" class="form-control" name="editedCompanyName{{ loop.index0 }}" value="{{ experience.companyName }}">
+                </div>
+                <div class="form-group">
+                    <label for="editedRole{{ loop.index0 }}">Role:</label>
+                    <input type="text" id="editedRole{{ loop.index0 }}" class="form-control" name="editedRole{{ loop.index0 }}" value="{{ experience.role }}">
+                </div>
+                <div class="form-group">
+                    <label for="editedFromYear{{ loop.index0 }}">From Year:</label>
+                    <input type="text" id="editedFromYear{{ loop.index0 }}" class="form-control" name="editedFromYear{{ loop.index0 }}" value="{{ experience.from_year }}">
+                </div>
+                <div class="form-group">
+                    <label for="editedToYear{{ loop.index0 }}">To Year:</label>
+                    <input type="text" id="editedToYear{{ loop.index0 }}" class="form-control" name="editedToYear{{ loop.index0 }}" value="{{ experience.to_year }}">
+                </div>
+                <div class="form-group">
+                    <label for="editedProjectDesc{{ loop.index0 }}">Project Description:</label>
+                    <textarea id="editedProjectDesc{{ loop.index0 }}" class="form-control" rows="4" name="editedProjectDesc{{ loop.index0 }}">{{ experience.projectDesc }}</textarea>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="removeExperience({{ loop.index0 }})">Delete</button>
+            </div>
+        {% endfor %}
+    </div>
+    <button type="button" class="ecard-button" onclick="addExperience()">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>
+
+      <input type="hidden" name="totalskills" id="totalskills" value="0">
+      <div class="scard" id="myScard">
+        <h2 class="scard-title">Skills:</h2>
+        <div class="scard-content">
+        </div>
+        <button type="button" class="ecard-button" onclick="addSkills()">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <!-- First Column -->
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-block">
+                <h4 class="card-title">Address Details:</h4>
+                <h6 class="card-title" style="color:red;">Note:If there are any changes in the address, change it manually</h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="pincodeInput">Enter Pincode:</label>
+                      <input type="text" id="pincodeInput" class="form-control" placeholder="Enter pincode" name="pincode">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="stateInput">State:</label>
+                      <input type="text" id="stateInput" class="form-control" name="state">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="districtInput">District:</label>
+                      <input type="text" id="districtInput" class="form-control" name="district">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="mandalInput">Mandal:</label>
+                      <input type="text" id="mandalInput" class="form-control" name="mandal">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="villageInput">Village:</label>
+                      <input type="text" id="villageInput" class="form-control" name="village">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="countryInput">Country:</label>
+                      <input type="text" id="countryInput" class="form-control" value="India" readonly name="country">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 d-flex flex-column">
+            <div class="card flex-grow-1">
+              <div class="card-block">
+                <div class="form-group">
+                  <label for="hobbiesInput">Hobbies:</label>
+                  <input type="text" id="hobbiesInput" class="form-control" placeholder="Enter your hobbies" name="hobbies">
+                </div>
+
+                <input type="hidden" name="totalMedia" id="totalMedia" value="0">
+                <div class="smcard" id="myScard">
+                  <h2 class="smcard-title">Social Media Details:</h2>
+                  <div class="social-media-fields">
+                    <!-- Social media input fields will be added here dynamically -->
+                  </div>
+                  <button type="button" class="smcard-button" onclick="addSocialMediaInput()">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
+    <script src="{{url_for('static', filename='js/student/edit_student_profile.js')}}"></script>
+  </body>
+</html>
