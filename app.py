@@ -13,6 +13,12 @@ from email.mime.multipart import MIMEMultipart
 from functools import wraps
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user
 import re
+
+# import os
+
+# api_key = os.getenv("API_KEY")
+# db_url = os.getenv("DATABASE_URL")
+
 app = Flask(__name__)
 
 login_manager = LoginManager()
