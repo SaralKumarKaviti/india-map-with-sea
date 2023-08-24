@@ -1,5 +1,4 @@
-
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 *,
 *::after,
 *::before {
@@ -300,6 +299,7 @@ a {
   margin-bottom: 10px;
   position: relative;
 }
+
 .section-wrapper .skill-percentage::after {
   content: "";
   width: 100%;
@@ -308,13 +308,55 @@ a {
   display: block;
   margin-top: 3px;
 }
-.section-wrapper .skill-percentage::before {
+
+.section-wrapper .skill-percentage.beginner::before {
   content: "";
   height: 6px;
   background: #66cc99;
   position: absolute;
   margin-top: 3px;
   bottom: 0;
+  width: 35%; /* Adjust the width as needed */
+}
+
+.section-wrapper .skill-percentage.intermediate::before {
+  content: "";
+  height: 6px;
+  background: #66cc99;
+  position: absolute;
+  margin-top: 3px;
+  bottom: 0;
+  width: 40%; /* Adjust the width as needed */
+}
+
+.section-wrapper .skill-percentage.advanced::before {
+  content: "";
+  height: 6px;
+  background: #66cc99;
+  position: absolute;
+  margin-top: 3px;
+  bottom: 0;
+  width: 60%; /* Adjust the width as needed */
+}
+
+.section-wrapper .skill-percentage.professional::before {
+  content: "";
+  height: 6px;
+  background: #66cc99;
+  position: absolute;
+  margin-top: 3px;
+  bottom: 0;
+  width: 80%; /* Adjust the width as needed */
+}
+
+.section-wrapper .skill-percentage.master::before {
+  content: "";
+  height: 6px;
+  background: #66cc99;
+  position: absolute;
+  margin-top: 3px;
+  bottom: 0;
+  width: 100%; /* Adjust the width as needed */
 }
 
 @-webkit-keyframes skill_1 {

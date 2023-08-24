@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 body {
-/*    background: linear-gradient(to bottom, #F0F8FF, #006994);*/
+    /*    background: linear-gradient(to bottom, #F0F8FF, #006994);*/
     background-repeat: no-repeat;
     background-attachment: fixed; /* Add this line */
     margin: 0;
@@ -162,8 +163,8 @@ table tbody tr td:nth-last-child(1) {
 
 .table-container h3{
 /*  padding: 80px;*/
-    font-size: 25px;
-    color: black;
+font-size: 25px;
+color: black;
 }
 .user-info {
     display: auto;

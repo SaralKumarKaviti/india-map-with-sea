@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-  body {
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+body {
   background-color:  #eee;
 }
 .title {
  
-    margin-bottom: 50px;
+  margin-bottom: 50px;
 /*    text-transform: uppercase;*/
 }
 
@@ -93,28 +93,28 @@ textarea.form-control[rows="4"]:focus {
 }
 
 .ecard {
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      margin: 20px auto;
-      transition: box-shadow 0.3s ease, background-color 0.3s ease;
-      max-width: 97%; /* Set the maximum width */
-      width: 100%; /* Allow the card to shrink on smaller screens */
-    }
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  max-width: 97%; /* Set the maximum width */
+  width: 100%; /* Allow the card to shrink on smaller screens */
+}
 
-    .ecard:hover {
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
+.ecard:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 
-    .ecard .ecard-title {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
+.ecard .ecard-title {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
 
-    .ecard .ecard-content {
-      font-size: 1em;
-    }
+.ecard .ecard-content {
+  font-size: 1em;
+}
 
 .ecard-button {
   background-color: #5b8c5a;
@@ -139,52 +139,52 @@ textarea.form-control[rows="4"]:focus {
 }
 
 .scard {
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      margin: 20px auto;
-      transition: box-shadow 0.3s ease, background-color 0.3s ease;
-      max-width: 97%; /* Set the maximum width */
-      width: 100%; /* Allow the card to shrink on smaller screens */
-    }
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  max-width: 97%; /* Set the maximum width */
+  width: 100%; /* Allow the card to shrink on smaller screens */
+}
 .scard:hover {
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 
-    .scard .scard-title {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
+.scard .scard-title {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
 
-    .scard .scard-content {
-      font-size: 1em;
-    }
-    
+.scard .scard-content {
+  font-size: 1em;
+}
+
 
 .scard-button {
-    background-color: #5b8c5a;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 15px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    display: flex;
-    align-items: center; /* Change this to "center" */
-    justify-content: space-between;
-  }
+  background-color: #5b8c5a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center; /* Change this to "center" */
+  justify-content: space-between;
+}
 
-  .scard-button:hover {
-    background-color: #447944;
-  }
+.scard-button:hover {
+  background-color: #447944;
+}
 
-  .scard-button i {
-    margin-left: 5px;
-  }
+.scard-button i {
+  margin-left: 5px;
+}
 
-  .smcard {
+.smcard {
   background-color: #f9f9f9;
   padding: 20px;
   border-radius: 8px;

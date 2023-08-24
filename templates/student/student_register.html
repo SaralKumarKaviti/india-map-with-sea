@@ -1,43 +1,62 @@
 <!DOCTYPE html>
 <!-- Coding by CodingLab | www.codinglabweb.com-->
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Student registration </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_reg_style.css') }}">
-   </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Student registration </title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/student_reg_style.css') }}">
+</head>
 <body>
   <div class="wrapper">
     <h2>Registration</h2>
-     {% with messages = get_flashed_messages() %}
-            {% if messages %}
-              <div class="alert alert-danger mt-3">
-                {% for message in messages %}
-                  {{ message }}
-                  <br>
-                {% endfor %}
-              </div>
-            {% endif %}
-          {% endwith %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-danger mt-3">
+      {% for message in messages %}
+      {{ message }}
+      <br>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     <form method="POST" action="{{ url_for('register_user') }}">
-      <div class="input-box">
-        <input type="text" name="username" placeholder="Enter your name" required>
+      <div class="input-grid">
+        <div class="input-box">
+          <input type="text" name="username" placeholder="Enter username" required>
+        </div>
+        <div class="input-box">
+          <input type="text" name="fullname" placeholder="Enter fullname" required>
+        </div>
+        <div class="input-box">
+          <input type="text" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="input-box">
+          <input type="phone number" name="phone" placeholder="Enter your phone number" required>
+        </div>
+        <div class="password-boxes">
+          <div class="input-box">
+            <input type="password" name="password" placeholder="Create password" required>
+            <span class="info-icon" id="info-icon">ℹ️</span>
+            <div class="password-requirements" id="password-requirements">
+              Password must contain:
+              <ul>
+                <li>At least 8 characters</li>
+                <li>At least one uppercase letter</li>
+                <li>At least one lowercase letter</li>
+                <li>At least one digit</li>
+                <li>At least one special character (@$!%*?&)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="password-boxes">
+          <div class="input-box">
+            <input type="password" name="confirm_password" placeholder="Confirm password" required>
+          </div>
+        </div>
+
       </div>
-      <div class="input-box">
-        <input type="text"  name="email" placeholder="Enter your email" required>
-      </div>
-      <div class="input-box">
-        <input type="phone number" name="phone" placeholder="Enter your phone number" required>
-      </div>
-      <div class="input-box">
-        <input type="password"  name="password" placeholder="Create password" required>
-      </div>
-      <div class="input-box">
-        <input type="password" name="confirm_password" placeholder="Confirm password" required>
-      </div>
-      
-        
       <div class="input-box button">
         <input type="Submit" value="Register Now">
       </div>
@@ -47,26 +66,39 @@
     </form>
   </div>
   <div class="registration-container">
-    
     <div class="notification" id="notification">Verification mail sent, check your email</div>
-</div>
+  </div>
 
-<script>
+  <script>
     // Your existing JavaScript code
 
-registerButton.addEventListener("click", () => {
+    registerButton.addEventListener("click", () => {
 // Perform registration logic here
 
 // Show the notification
-notification.style.display = "block";
+      notification.style.display = "block";
 
 // Hide the notification after 5 seconds
-setTimeout(() => {
-    notification.style.display = "none";
-}, 5000);
-});
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 5000);
+    });
 
-</script>
+  </script>
+  <script type="text/javascript">
+    const infoIcon = document.getElementById('info-icon');
+    const passwordRequirements = document.getElementById('password-requirements');
+
+    infoIcon.addEventListener('click', () => {
+      passwordRequirements.style.display = 'block';
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!infoIcon.contains(event.target)) {
+        passwordRequirements.style.display = 'none';
+      }
+    });
+  </script>
 
 </body>
 </html>

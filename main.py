@@ -1,20 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response,flash,session
+from flask import Flask, render_template, request, redirect, url_for, make_response,flash,session,jsonify
 from config import client
 from models import *
 import secrets
 import datetime
 from bson import ObjectId
-# from datetime import datetime
 from random import randint
 import os
-from flask import jsonify
 from mongoengine import Document, StringField, BooleanField, DateTimeField
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from functools import wraps
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user
-
+import re
 app = Flask(__name__)
 
 login_manager = LoginManager()
@@ -85,50 +83,168 @@ def login_required_admin(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def is_valid_email(email):
+    email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    return re.match(email_pattern, email)
+
+def is_existing_email(email):
+    existing_student = StudentRegistration.objects.filter(email=email).first()
+    return existing_student is not None
+
+def is_valid_phone(phone):
+    phone_pattern = r'^\d{10}$'
+    return re.match(phone_pattern, phone)
+
+def is_valid_password(password):
+    password_pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
+    return re.match(password_pattern, password)
 
 @app.route('/images/profiles/<filename>')
 def send_uploaded_profile_pic(filename=''):
     from flask import send_from_directory
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-
+#admin login
+@login_required_admin
 @app.route("/", methods=["GET", "POST"])
 def adminIndex():
+    
+    if request.method == "POST":
+        admin_email = request.form.get("admin_email")
+        admin_password = request.form.get("admin_password")
+        admin = adminDetails.objects(admin=admin_email, password=admin_password).first()
+        if admin and admin.is_admin:
+            session['admin'] = admin_email
+            # return redirect(url_for('viewAllProfiles'))
+            return render_template("india.html",admin=admin_email,isAdmin=admin.is_admin)
+        flash("Invalid admin credentials.")
+    
+    return render_template("admin_login.html")
+
+
+@login_required_admin
+@app.route("/adminViewProfiles/<studentId>",methods=['POST','GET'])
+def adminViewProfiles(studentId):
+    username = session.get('admin')
     try:
-        if request.method == "POST":
-            uname = request.form["uname"]
-            pwd = request.form["pwd"]
-            user = adminDetails.objects(admin=uname, password=pwd).first()
-            if user:
-                if user.is_admin:
-                    session['admin'] = uname  # Set the admin session variable
-                    return redirect(url_for("all_profiles"))
-                else:
-                    flash("Access denied. Admin permission required.")  # Display proper message
+        social_media_list=[]
+        skills_info=[]
+        student_liat=[]
+        student_dict={}
+        experience_info=[]
+        media_detail={}
+        student_id_obj = ObjectId(studentId)
+        student = StudentProfile.objects(studentId=student_id_obj).first()
+        if student:
+            student_dict={
+                "studentName":student.userName,
+                "phone":student.phoneNumber,
+                "email":student.email,
+                "website":student.website,
+                "careerObjective":student.careerObjective,
+                "hobbies":student.hobbies,
+                "profilePic":student.profilePic
+            }
+            get_address =student.addressList
+            if not get_address:
+                address={
+                    "mandal":"-",
+                    "district":"-"
+                }    
             else:
-                flash("Invalid username or password", "error")
-    except Exception as e:
-        print(e)
-    return render_template("dashboard.html")
+                address = {
+                    "mandal": get_address.get("mandal", ""),
+                    "district": get_address.get("district", "")
+                }
+            student_dict["addressDetails"]=address
 
+            experience = student.experienceList.get('experienceDetails', [])
+            experience_info = []
+            for e in experience:
+                experience_data={
+                    "companyName":e['companyName'],
+                    "role":e['role'],
+                    "fromYear":e['from_year'],
+                    "toYear":e['to_year'],
+                    "project":e['projectDesc']
+                }
+                experience_info.append(experience_data)
 
+            skills = student.skillsList.get('skillDetails', [])
+            skills_info = []
+            for sk in skills:
+                skills_data={
+                    "techName":sk['techName'],
+                    "skillLevel":sk['skillLevel']
+                }
+                skills_info.append(skills_data)
+
+            social_media_details = student.socialMedia.get('socialMediaDetails', [])
+            social_media_list = []
+            for sm in social_media_details:
+                for key, value in sm.items():
+                    if key.startswith("socialMedia"):
+                        social_media_name = value
+                        social_media_url_key = "socialMediaURL" + key[len("socialMedia"):]
+                        social_media_url = sm.get(social_media_url_key, "")
+                        if social_media_name and social_media_url:
+                            social_media_list.append({"name": social_media_name, "url": social_media_url})         
+        return render_template('profile.html', 
+            student_data=student_dict, 
+            experience_info=experience_info, 
+            social_media_list=social_media_list,
+            skillsinfo=skills_info
+            )
+
+    except StudentProfile.DoesNotExist:
+        return "Student not found"
+
+#Student Register
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
+    
     if request.method == 'POST':
         # Collect user data from the registration form
         username = request.form['username']
+        fullname = request.form['fullname']
         email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
         viewOptionStatus=1
         # Check if passwords match
+
+        existing_student = StudentRegistration.objects.filter(username=username).first()
+        if existing_student:
+            flash('Username already exists. Please choose a different username.')
+            return redirect(url_for('register_user'))
+
+        if not is_valid_email(email):
+            flash('Invalid email format. Please enter a valid email address.')
+            return redirect(url_for('register_user'))
+
+        # Check if the email is already registered
+        if is_existing_email(email):
+            flash('Email already exists. Please use a different email address.')
+            return redirect(url_for('register_user'))
+
+        if not is_valid_phone(phone):
+            flash('Phone number must be 10 digits.')
+            return redirect(url_for('register_user'))
+
         if password != confirm_password:
             flash('Passwords do not match.')
             return redirect(url_for('register_user'))
+            
+        if not is_valid_password(password):
+            flash('Password must contain at least one uppercase letter, one lowercase letter, one digit, and one symbol.')
+            return redirect(url_for('register_user'))
+
+
         verification_token = secrets.token_urlsafe(32)
         new_student = StudentRegistration(
-            username=username, 
+            username=username,
+            fullname=fullname, 
             email=email, 
             phone=phone, 
             password=password, 
@@ -146,7 +262,7 @@ def register_user():
         return redirect(url_for('register_user'))
     return render_template('student/student_register.html')
 
-
+#Email Verification
 @app.route('/verify/<verification_token>')
 def verify_email(verification_token):
     student = StudentRegistration.objects(verification_token=verification_token).first()
@@ -154,7 +270,7 @@ def verify_email(verification_token):
         return redirect(url_for('login_user'))
     return 'Invalid verification token.'
 
-
+#Student login
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
     if request.method == 'POST':
@@ -172,7 +288,7 @@ def login_user():
         return render_template('student/login.html', verified=False, show_resend=False)
     return render_template('student/login.html', verified=True, show_resend=False)
 
-
+#Student activate account
 @app.route('/activate', methods=['GET', 'POST'])
 def activate_account():
     if request.method == 'POST':
@@ -187,8 +303,9 @@ def activate_account():
         return redirect(url_for('crud_page'))
     return render_template('student/activation.html')
 
-@app.route('/crudpage')
+#Student dashboard of add,edit,delete, and view
 @login_required 
+@app.route('/crudpage')
 def crud_page():
     optionStatus=0
     view_option=0
@@ -200,6 +317,7 @@ def crud_page():
     student_profiles = StudentProfile.objects(userName=username)
     return render_template('student/crudpage.html', username=username, option=optionStatus, view_option=view_option,student_profiles=student_profiles)
 
+#Get states wise
 @login_required
 @app.route("/getStateDetails/<state>")
 def get_state_details(state):
@@ -208,12 +326,14 @@ def get_state_details(state):
         student_list = []
         if state_students:
             for student in state_students:
+                print(student.studentId)
                 student_info = {
                     "profilePic": student.profilePic,
-                    "name": student.userName,
+                    "username": student.userName,
                     "state": student.addressList.get("state", ""),
                     "district": student.addressList.get("district", ""),
-                    "studentId": student.studentId
+                    "studentId":str(student.studentId),
+                    "fullname":student.fullname
                 }
                 student_list.append(student_info)
         state_districts = get_state_districts(state)
@@ -233,9 +353,10 @@ def get_state_districts(state):
             for district_data in state_districts:
                 district_info = {
                     "district": district_data.addressList.get("district", ""),
-                    "name": district_data.userName,
+                    "username": district_data.userName,
                     "profilePic": district_data.profilePic,
-                    "studentId": district_data.studentId
+                    "studentId":str(district_data.studentId),
+                    "fullname":district_data.fullname
                 }
                 district_list.append(district_info)
         return district_list
@@ -243,7 +364,7 @@ def get_state_districts(state):
         print(f"Error fetching {state} district data:", str(e))
         return []
 
-
+#Student add profile
 @app.route("/addStudentProfile",methods=['POST','GET'])
 @login_required
 def addStudentProfile():
@@ -265,6 +386,7 @@ def addStudentProfile():
         email = get_student_data.email
         phone_number = get_student_data.phone
         studentId = ObjectId(get_student_data.id)
+        fullname = get_student_data.fullname
     if current_user.is_authenticated:
         username = current_user.username
 
@@ -406,7 +528,8 @@ def addStudentProfile():
                 userName=username,
                 email=email,
                 phoneNumber=phone_number,
-                studentId=studentId
+                studentId=studentId,
+                fullname=fullname
                 )
             add_profile.save()
             if add_profile:
@@ -417,7 +540,7 @@ def addStudentProfile():
             flash("Something went wrong! Please check your details once!!")
     return render_template('student/add_profile.html',username=username)
 
-
+#student edit profile
 @app.route("/editStudentProfile", methods=['POST', 'GET'])
 @login_required
 def editStudentProfile():
@@ -531,12 +654,13 @@ def editStudentProfile():
     existing_hobbies = get_student_data.hobbies
     return render_template('student/edit_profile.html', username=username, existing_website=existing_website, existing_career=existing_career, existing_experience=existing_experience, existing_skills=existing_skills, existing_address=existing_address, existing_hobbies=existing_hobbies, existing_media=existing_media)
 
-@app.route("/deleteStudentProfile/<student_id>", methods=['POST','GET'])
+#student delete profile
+@app.route("/deleteStudentProfile/<studentId>", methods=['POST','GET'])
 @login_required
-def deleteStudentProfile(student_id):
+def deleteStudentProfile(studentId):
     username = session.get('username')
     try:
-        student_id_obj = ObjectId(student_id)
+        student_id_obj = ObjectId(studentId)
         student = StudentProfile.objects(userName=username, studentId=student_id_obj).first()
         if not student:
             flash("Student profile not found.")
@@ -552,16 +676,16 @@ def deleteStudentProfile(student_id):
         return redirect(url_for('crud_page'))
 
 
-@app.route("/profile/<student_id>",methods=['POST','GET'])
+@app.route("/studentProfile/<studentId>",methods=['POST','GET'])
 @login_required
-def studentProfile(student_id):
+def studentProfile(studentId):
     username = session.get('username')
     try:
         student_liat=[]
         student_dict={}
         experience_info=[]
         media_detail={}
-        student_id_obj = ObjectId(student_id)
+        student_id_obj = ObjectId(studentId)
         student = StudentProfile.objects(userName=username, studentId=student_id_obj).first()
         if not student:
             flash("Student profile not found.")
@@ -574,7 +698,9 @@ def studentProfile(student_id):
                 "website":student.website,
                 "careerObjective":student.careerObjective,
                 "hobbies":student.hobbies,
-                "profilePic":student.profilePic
+                "profilePic":student.profilePic,
+                "studentId":str(student.studentId),
+                "fullname":student.fullname
             }
             get_address =student.addressList
             if not get_address:
@@ -620,29 +746,16 @@ def studentProfile(student_id):
                         social_media_url = sm.get(social_media_url_key, "")
                         if social_media_name and social_media_url:
                             social_media_list.append({"name": social_media_name, "url": social_media_url})         
-        return render_template('student/profile.html', 
+        return render_template('student/all_profile.html', 
             student_data=student_dict, 
             experience_info=experience_info, 
             social_media_list=social_media_list,
-            skillsinfo=skills_info
+            skillsinfo=skills_info,
+            studentId = student.studentId
             )
 
     except StudentProfile.DoesNotExist:
         return "Student not found"
-
-@login_required_admin
-@app.route("/admin/allStudentProfiles", methods=['GET'])
-def all_profiles():
-    admin = session.get('admin')
-    if not admin:
-        flash("Session not authorized.")
-        return redirect(url_for('adminIndex'))
-    get_admin = adminDetails.objects(admin=admin).first()
-    if get_admin and get_admin.is_admin:
-        return render_template('india.html')
-    else:
-        flash("Access denied. Admin permission required.")
-        return redirect(url_for('adminIndex'))
 
 
 @app.route('/logout', methods=['POST','GET'])
@@ -650,12 +763,10 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login_user'))
 
-@app.route('/adminlogout', methods=['POST', 'GET'])
+@app.route('/adminlogout', methods=['GET'])
 def alogout():
     session.pop('admin', None)
     return redirect(url_for('adminIndex'))
 
-
 if __name__ == '__main__':
-    app.run(debug=True)
-
+    app.run(host='0.0.0.0',port=5000,debug=True)

@@ -8,6 +8,7 @@ class adminDetails(Document):
 
 class StudentRegistration(Document):
     username = StringField(required=True)
+    fullname = StringField(required=True)
     email = StringField(required=True)
     phone = StringField(required=True)
     password = StringField(required=True)
@@ -32,7 +33,7 @@ class StudentProfile(Document):
 	experienceList = DictField()
 	skillsList = DictField()
 	hobbies = StringField()
-	ref = StringField()
+	fullname = StringField()
 	createdOn = DateTimeField()
 	status = IntField()
 	studentId = ObjectIdField()

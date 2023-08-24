@@ -1,7 +1,7 @@
 function addExperience() {
-    var experienceContainer = document.getElementById('experienceContainer');
-    
-    var experienceDiv = document.createElement('div');
+  var experienceContainer = document.getElementById('experienceContainer');
+  
+  var experienceDiv = document.createElement('div');
     var index = experienceContainer.childElementCount; // Calculate the index
     
     experienceDiv.id = 'experienceDiv' + index;
@@ -23,40 +23,40 @@ function addExperience() {
     
     // Append the experience detail section to the container
     experienceContainer.appendChild(experienceDiv);
-}
+  }
 
 // Function to remove the last experience detail section
-function removeExperience() {
+  function removeExperience() {
     var experienceContainer = document.getElementById('experienceContainer');
     if (experienceContainer.childElementCount > 0) {
-        experienceContainer.removeChild(experienceContainer.lastChild);
+      experienceContainer.removeChild(experienceContainer.lastChild);
     }
-}
+  }
 
 // Helper function to create an input element
-function createInput(placeholder, name) {
+  function createInput(placeholder, name) {
     var input = document.createElement('input');
     input.type = 'text';
     input.className = 'form-control';
     input.name = name + (experienceContainer.childElementCount + 1);
     input.placeholder = placeholder;
     return input;
-}
+  }
 
 // Helper function to create a textarea element
-function createTextarea(placeholder, name) {
+  function createTextarea(placeholder, name) {
     var textarea = document.createElement('textarea');
     textarea.className = 'form-control';
     textarea.rows = '4';
     textarea.name = name + (experienceContainer.childElementCount + 1);
     textarea.placeholder = placeholder;
     return textarea;
-}
+  }
 
 
-const smcardContent = document.querySelector('.social-media-fields');
+  const smcardContent = document.querySelector('.social-media-fields');
 
-function addSocialMediaInput() {
+  function addSocialMediaInput() {
   totalMediaEntries++; // Increment the count
   document.getElementById('editedTotalMedia').value = totalMediaEntries;
 

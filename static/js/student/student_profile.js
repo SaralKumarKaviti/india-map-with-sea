@@ -1,8 +1,8 @@
 // Your provided JavaScript code starts here
-  const ecardContent = document.querySelector('.ecard-content');
+const ecardContent = document.querySelector('.ecard-content');
 
-  let totalExperienceEntries = 0;
-  function addExperience() {
+let totalExperienceEntries = 0;
+function addExperience() {
 
   totalExperienceEntries++;
   document.getElementById('totalExperienceEntries').value = totalExperienceEntries;
@@ -92,7 +92,7 @@
   flexContainer.appendChild(fromYearContainer);
   flexContainer.appendChild(toYearContainer);
 
- 
+  
 
   inputGroup.appendChild(flexContainer);
 
@@ -133,76 +133,76 @@
 }
 
 const scardContent = document.querySelector('.scard-content');
-  let totalskills = 0;
+let totalskills = 0;
 
-  function addSkills() {
-    totalskills++;
-    document.getElementById('totalskills').value = totalskills;
+function addSkills() {
+  totalskills++;
+  document.getElementById('totalskills').value = totalskills;
 
-    let skillGroup = document.createElement('div');
-    skillGroup.className = 'form-group';
+  let skillGroup = document.createElement('div');
+  skillGroup.className = 'form-group';
 
-    let skillContainer = document.createElement('div');
-    skillContainer.className = 'd-flex';
+  let skillContainer = document.createElement('div');
+  skillContainer.className = 'd-flex';
 
-    let technologyContainer = document.createElement('div');
-    technologyContainer.className = 'flex-grow-1';
+  let technologyContainer = document.createElement('div');
+  technologyContainer.className = 'flex-grow-1';
 
-    let technology = document.createElement('label');
-    technology.textContent = 'Technology Name';
+  let technology = document.createElement('label');
+  technology.textContent = 'Technology Name';
 
-    let technologyInput = document.createElement('input');
-    technologyInput.type = 'text';
-    technologyInput.className = 'form-control';
-    technologyInput.placeholder = 'Technology name';
-    technologyInput.name = 'technologyName' + totalskills;
+  let technologyInput = document.createElement('input');
+  technologyInput.type = 'text';
+  technologyInput.className = 'form-control';
+  technologyInput.placeholder = 'Technology name';
+  technologyInput.name = 'technologyName' + totalskills;
 
-    technologyContainer.appendChild(technology);
-    technologyContainer.appendChild(technologyInput);
+  technologyContainer.appendChild(technology);
+  technologyContainer.appendChild(technologyInput);
 
-    let skillLevelContainer = document.createElement('div');
-    skillLevelContainer.className = 'flex-grow-1';
+  let skillLevelContainer = document.createElement('div');
+  skillLevelContainer.className = 'flex-grow-1';
 
-    let skillLevelLabel = document.createElement('label');
-    skillLevelLabel.textContent = 'Skill Level';
+  let skillLevelLabel = document.createElement('label');
+  skillLevelLabel.textContent = 'Skill Level';
 
-    let skillLevelSelect = document.createElement('select');
-    skillLevelSelect.className = 'form-control';
-    skillLevelSelect.name = 'skillLevel' + totalskills;
+  let skillLevelSelect = document.createElement('select');
+  skillLevelSelect.className = 'form-control';
+  skillLevelSelect.name = 'skillLevel' + totalskills;
 
-    let skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Professional', 'Master'];
-    for (let level of skillLevels) {
-      let option = document.createElement('option');
-      option.value = level;
-      option.textContent = level;
-      skillLevelSelect.appendChild(option);
-    }
-
-    skillLevelContainer.appendChild(skillLevelLabel);
-    skillLevelContainer.appendChild(skillLevelSelect);
-
-    skillContainer.appendChild(technologyContainer);
-    skillContainer.appendChild(skillLevelContainer);
-
-    skillGroup.appendChild(skillContainer);
-
-    let skillDeleteButton = document.createElement('button');
-    skillDeleteButton.className = 'btn btn-danger ml-3';
-    skillDeleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    skillDeleteButton.style.padding = '5px 10px';
-    skillDeleteButton.style.borderRadius = '50%';
-    skillDeleteButton.style.marginRight = 'auto';
-
-    skillDeleteButton.addEventListener('click', () => {
-      skillGroup.remove();
-    });
-
-    skillGroup.appendChild(skillDeleteButton);
-
-    scardContent.appendChild(skillGroup);
+  let skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Professional', 'Master'];
+  for (let level of skillLevels) {
+    let option = document.createElement('option');
+    option.value = level;
+    option.textContent = level;
+    skillLevelSelect.appendChild(option);
   }
 
-  const smcardContent = document.querySelector('.social-media-fields');
+  skillLevelContainer.appendChild(skillLevelLabel);
+  skillLevelContainer.appendChild(skillLevelSelect);
+
+  skillContainer.appendChild(technologyContainer);
+  skillContainer.appendChild(skillLevelContainer);
+
+  skillGroup.appendChild(skillContainer);
+
+  let skillDeleteButton = document.createElement('button');
+  skillDeleteButton.className = 'btn btn-danger ml-3';
+  skillDeleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+  skillDeleteButton.style.padding = '5px 10px';
+  skillDeleteButton.style.borderRadius = '50%';
+  skillDeleteButton.style.marginRight = 'auto';
+
+  skillDeleteButton.addEventListener('click', () => {
+    skillGroup.remove();
+  });
+
+  skillGroup.appendChild(skillDeleteButton);
+
+  scardContent.appendChild(skillGroup);
+}
+
+const smcardContent = document.querySelector('.social-media-fields');
 
 let totalMedia = 0;
 

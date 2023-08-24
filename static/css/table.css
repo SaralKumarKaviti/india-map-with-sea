@@ -1,16 +1,16 @@
-
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 body {
-    background: linear-gradient(to bottom, #F0F8FF, #006994);
-    background-repeat: no-repeat;
-    background-attachment: fixed; /* Add this line */
-    margin: 0;
-    padding: 0;
+	background: linear-gradient(to bottom, #F0F8FF, #006994);
+	background-repeat: no-repeat;
+	background-attachment: fixed; /* Add this line */
+	margin: 0;
+	padding: 0;
 
 }
 
 .main-content {
 
-    margin: 0;
+	margin: 0;
 	padding: 10px;
 	display: flex;
 	justify-content: flex-start; /* You can try different values here */
@@ -19,20 +19,20 @@ body {
 }
 
 .table-container {
-    max-height: 500px; /* Set a fixed height for the table container */
-    overflow-y: auto; /* Enable vertical scrolling when content exceeds the height */
-    margin-top: 20px;
-    margin-right: 20px; /* Add some right margin for better alignment */
-    position: absolute;
-    top: 10px;
-    padding-right: 100px;
+	max-height: 500px; /* Set a fixed height for the table container */
+	overflow-y: auto; /* Enable vertical scrolling when content exceeds the height */
+	margin-top: 20px;
+	margin-right: 20px; /* Add some right margin for better alignment */
+	position: absolute;
+	top: 10px;
+	padding-right: 100px;
 /*    padding: 10px;*/
 }
 
 .table {
-    border-spacing: 0 10px 10px 0;
-    border-collapse: separate;
-    width: 100px; /* Take up full width of the container */
+	border-spacing: 0 10px 10px 0;
+	border-collapse: separate;
+	width: 100px; /* Take up full width of the container */
 
 
 }
@@ -74,15 +74,15 @@ body {
 
 
 .table-container {
-  max-height: 550px; /* Set a fixed height for the container */
-  overflow-x: hidden; /* Hide the vertical scrollbar */
+	max-height: 550px; /* Set a fixed height for the container */
+	overflow-x: hidden; /* Hide the vertical scrollbar */
 /*  overflow-y: hidden;*/
 }
 
 .table-container h3{
 /*	padding: 80px;*/
-	font-size: 25px;
-	color: black;
+font-size: 25px;
+color: black;
 }
 .user-info {
 	display: auto;

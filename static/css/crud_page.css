@@ -1,4 +1,5 @@
 /* Update your existing CSS */
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 .skills {
     display: flex;
     flex-direction: column;
