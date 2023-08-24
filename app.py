@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response,flash,session,jsonify
-from config import client
+from config import db_client
 from models import *
 import secrets
 import datetime
