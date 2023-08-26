@@ -4,7 +4,7 @@ from mongoengine import connect
 
 # client = connect('studentprofiles',host='localhost',port=27017)
 
-connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles?tls=true"
+connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles?ssl=true&ssl_cert_reqs=CERT_NONE"
 client=connect(host=connection_string)
 
 # from retrying import retry
