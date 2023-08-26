@@ -27,13 +27,14 @@ from pymongo import MongoClient
 import ssl
 
 # Replace this with your actual connection string
-connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles"
+connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles?ssl=true&ssl_ca_certs=D:\\Saral-SS\\Projects\\india-map-with-seam"
+
 
 # Create a MongoClient instance using the connection string
-client = MongoClient(connection_string, ssl=True, ssl_cert_reqs=ssl.CERT_NONE)
+client = MongoClient(connection_string)
 
 # Access the "studentprofiles" database
-db = client.studentprofiles
+# db = client.studentprofiles
 
 # Now you can work with the database collections
 # # For example:
@@ -42,4 +43,4 @@ db = client.studentprofiles
 # print(result)
 
 # Remember to close the connection when you're done
-client.close()
+# client.close()
