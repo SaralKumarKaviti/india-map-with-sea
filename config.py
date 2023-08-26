@@ -4,7 +4,7 @@ from mongoengine import connect
 
 # client = connect('studentprofiles',host='localhost',port=27017)
 
-connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles?ssl=true&ssl_cert_reqs=CERT_NONE"
+connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles"
 client=connect(host=connection_string)
 
 # from retrying import retry
@@ -23,15 +23,15 @@ client=connect(host=connection_string)
 
 # db_client = connect_to_mongodb()
 
-from pymongo import MongoClient
-import ssl
+# from pymongo import MongoClient
+# import ssl
 
-# Replace this with your actual connection string
-connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles?ssl=true&ssl_ca_certs=D:\\Saral-SS\\Projects\\india-map-with-seam"
+# # Replace this with your actual connection string
+# connection_string = "mongodb+srv://saralkumar001:PoUhiEHIBBP970Xf@cluster0.pv0sybl.mongodb.net/studentprofiles?ssl=true&ssl_ca_certs=D:\\Saral-SS\\Projects\\india-map-with-seam"
 
 
-# Create a MongoClient instance using the connection string
-client = MongoClient(connection_string)
+# # Create a MongoClient instance using the connection string
+# client = MongoClient(connection_string)
 
 # Access the "studentprofiles" database
 # db = client.studentprofiles
