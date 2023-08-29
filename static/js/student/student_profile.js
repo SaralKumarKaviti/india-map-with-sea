@@ -307,3 +307,43 @@ pincodeInput.addEventListener('input', async () => {
 //     alert("Data submitted successfully!");
 //     return true; // Allow form submission
 //   }
+
+
+function addNewExperience() {
+   var companyName = document.querySelector('input[name^="companyName"]').value;
+  var role = document.querySelector('input[name^="role"]').value;
+  var fromYear = document.querySelector('select[name^="fromYear"]').value;
+  var toYear = document.querySelector('select[name^="toYear"]').value;
+  var projectDesc = document.querySelector('textarea[name^="projectDesc"]').value;
+
+  const formData = new FormData();
+  formData.append('companyName', newCompanyName);
+  formData.append('role', newRole);
+  formData.append('fromYear', newFromYear);
+  formData.append('toYear', newToYear);
+  formData.append('projectDesc', newProjectDesc);
+
+  fetch('/add_experience', {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    clearExperienceFields();
+  })
+  .catch(error => {
+    console.error('An error occurred:', error);
+  });
+}
+
+function clearExperienceFields() {
+  document.querySelector(`input[name="companyName${totalExperienceEntries}"]`).value = '';
+  document.querySelector(`input[name="role${totalExperienceEntries}"]`).value = '';
+  document.querySelector(`select[name="fromYear${totalExperienceEntries}"]`).value = '';
+  document.querySelector(`select[name="toYear${totalExperienceEntries}"]`).value = '';
+  document.querySelector(`textarea[name="projectDesc${totalExperienceEntries}"]`).value = '';
+
+  totalExperienceEntries++;
+  document.getElementById('totalExperienceEntries').value = totalExperienceEntries;
+}

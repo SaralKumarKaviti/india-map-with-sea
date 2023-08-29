@@ -118,3 +118,4 @@ pincodeInput.addEventListener('input', async () => {
     }
   }
 });
+

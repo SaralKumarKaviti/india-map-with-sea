@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/add_profile.css') }}">
 </head>
 <body>
-  <form action="{{ url_for('addStudentProfile') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateForm();">
+  <form action="{{ url_for('editStudentProfile') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateForm();">
     <div class="container py-3">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="username">Username : {{ username }}</div>
@@ -40,12 +40,10 @@
           <div class="col-md-6 d-flex flex-column">
             <div class="card flex-grow-1">
               <div class="card-block">
+                
                 <div class="form-group">
-                  <label for="fileInput">Profile Pic:</label>
-                  <input type="file" id="fileInput" class="form-control-file" name="profilePic">
-                </div>
-                <div class="form-group">
-                  <label for="textInput">Website:</label>
+                  <label for="textInput"><i class='fas fa-globe' style='font-size:15px'></i>
+            <span class="ml-1">Website:</span></label>
                   <input type="text" id="textInput" class="form-control" placeholder="Enter text" name="website" value="{{ existing_website }}">
                 </div>
               </div>
@@ -57,6 +55,7 @@
               <div class="card-block">
                 <div class="form-group">
                   <label for="textarea">Career Objective:</label>
+
                   <textarea id="textarea" class="form-control" rows="4" placeholder="Enter your text here" name="careerObjective">{{ existing_career }}</textarea>
                 </div>
               </div>
@@ -65,44 +64,82 @@
         </div>
       </div>
 
+      <input type="hidden" name="totalExperienceEntries" id="totalExperienceEntries" value="0">
       <div class="ecard" id="myEcard">
-    <h2 class="ecard-title">Experience:</h2>
-    <div id="experienceContainer">
-        {% for experience in experienceDetails %}
-            <div class="ecard-content">
-                <div class="form-group">
-                    <label for="editedCompanyName{{ loop.index0 }}">Company Name:</label>
-                    <input type="text" id="editedCompanyName{{ loop.index0 }}" class="form-control" name="editedCompanyName{{ loop.index0 }}" value="{{ experience.companyName }}">
-                </div>
-                <div class="form-group">
-                    <label for="editedRole{{ loop.index0 }}">Role:</label>
-                    <input type="text" id="editedRole{{ loop.index0 }}" class="form-control" name="editedRole{{ loop.index0 }}" value="{{ experience.role }}">
-                </div>
-                <div class="form-group">
-                    <label for="editedFromYear{{ loop.index0 }}">From Year:</label>
-                    <input type="text" id="editedFromYear{{ loop.index0 }}" class="form-control" name="editedFromYear{{ loop.index0 }}" value="{{ experience.from_year }}">
-                </div>
-                <div class="form-group">
-                    <label for="editedToYear{{ loop.index0 }}">To Year:</label>
-                    <input type="text" id="editedToYear{{ loop.index0 }}" class="form-control" name="editedToYear{{ loop.index0 }}" value="{{ experience.to_year }}">
-                </div>
-                <div class="form-group">
-                    <label for="editedProjectDesc{{ loop.index0 }}">Project Description:</label>
-                    <textarea id="editedProjectDesc{{ loop.index0 }}" class="form-control" rows="4" name="editedProjectDesc{{ loop.index0 }}">{{ experience.projectDesc }}</textarea>
-                </div>
-                <button type="button" class="btn btn-danger" onclick="removeExperience({{ loop.index0 }})">Delete</button>
-            </div>
-        {% endfor %}
-    </div>
-    <button type="button" class="ecard-button" onclick="addExperience()">
-        <i class="fas fa-plus"></i>
-    </button>
-</div>
+        <h2 class="ecard-title">Experience:</h2>
+        <div class="ecard-content">
+          {% if experience_info %}
+              <table class="experience-table">
+                  <tr>
+                      <th>Company Name</th>
+                      <th>Role Type</th>
+                      <th>From Year</th>
+                      <th>To Year</th>
+                      <th>Action</th>
+                  </tr>
+                  {% for exp in experience_info %}
+                  <tr>
+                      <td>{{ exp.companyName }}</td>
+                      <td>{{ exp.role }}</td>
+                      <td>{{ exp.fromYear }}</td>
+                      <td>{{ exp.toYear }}</td>
+                      <td><a href="{{url_for('delete_experience', index=loop.index)}}"><i class="fa fa-trash" style="color:#FF7F50"></i></i></a>
+                          
+                      </td>
+                  </tr>
+                  <tr>
+                      <td colspan="5">
+                          <strong>Project Description:</strong><br>
+                          {{ exp.projectDesc }}
+                      </td>
+                  </tr>
+                  {% endfor %}
+              </table>
+              {% else %}
+              <h6>Data not existing on Experience details</h6>
+              {% endif %}
+        </div>
 
+        <input type="hidden" name="totalExperienceEntries" id="totalExperienceEntries" value="0">
+         <!-- <div class="ecard" id="myEcard"> -->
+        <!-- <h2 class="ecard-title">Experience:</h2> -->
+        <div class="ecard-content" id="experienceContainer">
+        </div>
+        <br><br>
+        <button type="button" class="ecard-button" onclick="addExperience()">
+          <i class="fas fa-plus"></i>
+        </button>
+      <!-- </div> -->
+        <!-- <button type="button" class="add-experience-button" onclick="addNewExperienceInput()">
+          <i class="fas fa-plus"></i> Add Experience
+        </button> -->
+
+      </div>
       <input type="hidden" name="totalskills" id="totalskills" value="0">
       <div class="scard" id="myScard">
         <h2 class="scard-title">Skills:</h2>
         <div class="scard-content">
+
+          {% if skill_info %}
+              <table class="experience-table">
+                  <tr>
+                      <th>Technology</th>
+                      <th>Level</th>
+                      <th>Action</th>
+                  </tr>
+                  {% for si in skill_info %}
+                  <tr>
+                      <td>{{ si.techName }}</td>
+                      <td>{{ si.skillLevel }}</td>
+                      <td><a href="{{url_for('delete_skills', index=loop.index)}}"><i class="fa fa-trash" style="color:#FF7F50"></i></a>   
+                      </td>
+                  </tr>
+                  
+                  {% endfor %}
+              </table>
+              {% else %}
+              <h6>Data not existing on Skill details</h6>
+              {% endif %}
         </div>
         <button type="button" class="ecard-button" onclick="addSkills()">
           <i class="fas fa-plus"></i>
@@ -115,19 +152,20 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-block">
-                <h4 class="card-title">Address Details:</h4>
+                <h4 class="card-title"><i class='fas fa-map-marker-alt' style='font-size:20px'></i>
+            <span class="ml-1">Address Details:</span>
                 <h6 class="card-title" style="color:red;">Note:If there are any changes in the address, change it manually</h6>
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="pincodeInput">Enter Pincode:</label>
-                      <input type="text" id="pincodeInput" class="form-control" placeholder="Enter pincode" name="pincode">
+                      <input type="text" id="pincodeInput" class="form-control" placeholder="Enter pincode" name="pincode" value="{{address_info.pincode}}">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="stateInput">State:</label>
-                      <input type="text" id="stateInput" class="form-control" name="state">
+                      <input type="text" id="stateInput" class="form-control" name="state" value="{{address_info.state}}">
                     </div>
                   </div>
                 </div>
@@ -135,13 +173,13 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="districtInput">District:</label>
-                      <input type="text" id="districtInput" class="form-control" name="district">
+                      <input type="text" id="districtInput" class="form-control" name="district" value="{{address_info.district}}">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="mandalInput">Mandal:</label>
-                      <input type="text" id="mandalInput" class="form-control" name="mandal">
+                      <input type="text" id="mandalInput" class="form-control" name="mandal" value="{{address_info.mandal}}">
                     </div>
                   </div>
                 </div>
@@ -149,13 +187,13 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="villageInput">Village:</label>
-                      <input type="text" id="villageInput" class="form-control" name="village">
+                      <input type="text" id="villageInput" class="form-control" name="village" value="{{address_info.village}}">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="countryInput">Country:</label>
-                      <input type="text" id="countryInput" class="form-control" value="India" readonly name="country">
+                      <input type="text" id="countryInput" class="form-control" value="{{address_info.country}}" readonly name="country">
                     </div>
                   </div>
                 </div>
@@ -167,19 +205,39 @@
               <div class="card-block">
                 <div class="form-group">
                   <label for="hobbiesInput">Hobbies:</label>
-                  <input type="text" id="hobbiesInput" class="form-control" placeholder="Enter your hobbies" name="hobbies">
+                  <input type="text" id="hobbiesInput" class="form-control" placeholder="Enter your hobbies" name="hobbies" value="{{existing_hobbies}}">
                 </div>
 
                 <input type="hidden" name="totalMedia" id="totalMedia" value="0">
-                <div class="smcard" id="myScard">
-                  <h2 class="smcard-title">Social Media Details:</h2>
+                <!-- <div class="smcard" id="myScard"> -->
+                  <h5 class="smcard-title">Social Media Details:</h5>
                   <div class="social-media-fields">
                     <!-- Social media input fields will be added here dynamically -->
+                    {% if media_info %}
+                    <table class="experience-table">
+                        <tr>
+                            <th>Social Media</th>
+                            <th>URI</th>
+                            <th>Action</th>
+                        </tr>
+                        {% for mi in media_info %}
+                        <tr>
+                            <td>{{ mi.socialMedia }}</td>
+                            <td>{{ mi.socialMediaURL }}</td>
+                            <td><a href="{{url_for('delete_social_media', index=loop.index)}}"><i class="fa fa-trash" style="color:#FF7F50"></i></a>   
+                            </td>
+                        </tr>
+                        
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <h6>Data not existing on Social media details</h6>
+                    {% endif %}
                   </div>
                   <button type="button" class="smcard-button" onclick="addSocialMediaInput()">
                     <i class="fas fa-plus"></i>
                   </button>
-                </div>
+                <!-- </div> -->
               </div>
             </div>
           </div>
@@ -188,6 +246,11 @@
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
-    <script src="{{url_for('static', filename='js/student/edit_student_profile.js')}}"></script>
+    <script src="{{url_for('static', filename='js/student/student_profile.js')}}"></script>
+
+    
+
   </body>
 </html>
+
+

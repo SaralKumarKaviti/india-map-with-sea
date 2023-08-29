@@ -229,3 +229,79 @@ textarea.form-control[rows="4"]:focus {
 .smcard-button i {
   margin-left: 5px;
 }
+
+ .experience-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .experience-table th, .experience-table td {
+            
+            padding: 8px;
+            text-align: left;
+        }
+        .experience-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .experience-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+
+.delete-form {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+    .delete-button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: red;
+    }
+
+    .delete-button:hover {
+        text-decoration: none;
+    }
+
+    .delete-button i {
+        vertical-align: middle;
+    }
+
+/* Styles for the experience card container */
+.experience-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Styles for the experience row */
+.experience-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* Styles for company name, role, from year, and to year */
+.experience-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.company-name,
+.role,
+.from-year,
+.to-year {
+  margin-bottom: 5px;
+}
+
+/* Styles for the project description */
+.project-desc {
+  margin-top: 10px;
+}
